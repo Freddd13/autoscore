@@ -1,0 +1,16 @@
+MMS:
+  email: 233
+  password: 233
+  savefolder_path: 233
+
+RSS:
+  url: 233
+  max_days_difference: 233
+  max_trial_num: 233
+
+Email:
+  sender: 233
+  receivers: 233
+  smtp_host: 233
+  smtp_port: 233
+  mail_license: 114514

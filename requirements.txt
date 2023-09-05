@@ -1,1 +1,5 @@
 feedparser
+requests==2.27.1
+pytz
+msal
+tqdm

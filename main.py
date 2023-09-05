@@ -1,7 +1,8 @@
 import requests
 import feedparser
+import getpass
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import time
 import re
@@ -17,22 +18,25 @@ import logging
 import logging.config
 
 
-IS_LOCAL_ENV = (os.getlogin()=="Fred")
-# 从配置文件加载日志设置
-logging.config.fileConfig('logging.conf')
+IS_LOCAL_ENV = (getpass.getuser()=="Fred")
 LOG_PATH = "app.log"
-# logging.basicConfig(level=logging.INFO, filename=LOG_PATH, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger("app")
+LAST_SUCCESS_VAR_NAME = "LAST_SUCCESS_VIDEO_TIME"
+# log_file = 'myapp.log'
+config_dict = {
+    'log_file': LOG_PATH
+}
+logging.config.fileConfig('logging.conf', defaults=config_dict)
+logger = logging.getLogger(__file__)
+
 def log_method(func):
     def wrapper(*args, **kwargs):
-        class_name = args[0].__class__.__name__  # 获取类名
-        method_name = func.__name__  # 获取方法名
-        logger = logging.getLogger(class_name)
-        logger.debug(f"{class_name}.{method_name} 被调用")
+        class_name = args[0].__class__.__name__
+        method_name = func.__name__
+        # logger = logging.getLogger(class_name)
+        logger.debug(f"{class_name}.{method_name} is called")
         return func(*args, **kwargs)
     return wrapper
 
-# 定义一个类装饰器，应用于类的所有方法
 def apply_log_method_to_all_methods(cls):
     for attr_name, attr_value in cls.__dict__.items():
         if callable(attr_value):
@@ -47,7 +51,6 @@ class MMS:
         self.email = email
         self.password = password
 
-        # 登录接口URL
         self.login_url = "https://mms.pd.mapia.io/mms/public/user/signin/email"
         self.headers_login = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
@@ -55,17 +58,16 @@ class MMS:
             "X-Platform-Type": "PC",
             "Referer": "https://www.mymusicsheet.com/",
             "Origin": "https://www.mymusicsheet.com",
-            # 可能需要其他头信息，根据实际情况添加
         }
         
         if not self.login():
             logger.error("sending err email")
-            #结束程序
             os._exit()
         
         self.headers_download = {
             'Accept': 'application/json',
-            'Accept-Encoding': 'gzip, deflate, br',
+            # 'Accept-Encoding': 'gzip, deflate, br',
+            'Accept-Encoding': 'gzip, deflate', # GH不支持br
             'Accept-Language': 'zh-hans',
             "Authorization": f"Bearer {self.auth_token}",
             'Ngsw-Bypass': 'true',
@@ -84,7 +86,7 @@ class MMS:
         self._success = True
 
 
-    def login(self) -> str:
+    def login(self) -> bool:
         payload = {
             "email": self.email,
             "password": self.password
@@ -92,11 +94,10 @@ class MMS:
 
         response = requests.post(self.login_url, json=payload, headers=self.headers_login)
 
-        # 检查响应状态码
         if response.status_code == 200:
             self.auth_token = json.loads(response.text)['token']
             logger.info("登录成功")
-            logger.info("auth_token: " + self.auth_token)
+            # logger.info("auth_token: " + self.auth_token)
             return True
         else:
             logger.info("登录失败")
@@ -107,8 +108,13 @@ class MMS:
         url = 'https://mms.pd.mapia.io/mms/public/sheet/' + num
         response = requests.get(url, headers=self.headers_download)
 
+        if response.status_code != 200:
+            logger.error("fail to get sheet data")
+
         #print(response.text)
-        data = json.loads(response.text)
+        response.encoding = 'utf-8'
+        data = response.json()
+        # logger.debug(data.keys())
 
         if not os.path.exists(self.savefolder_path):
             os.makedirs(self.savefolder_path)        
@@ -119,7 +125,7 @@ class MMS:
             if filename.endswith(".pdf"):
                 total_num += 1
                 mfsKey=file['mfsKey']
-                logger.info("mfsKey: " + mfsKey)
+                # logger.debug("mfsKey: " + mfsKey)
                 #		 GET https://payport.pd.mapia.io/v2/currency?serviceProvider=mms&ngsw-bypass=true&no-cache=1693829884916&skipHeaders=true 
                 #		url = "https://payport.pd.mapia.io/v2/currency"
                 url_pdf = "https://mms.pd.mapia.io/mms/public/file/" + mfsKey + "/download"
@@ -191,6 +197,8 @@ class EmailHandler:
             message.attach(attach)
 
         # log file
+        # logger.debug(LOG_PATH)
+        # logger.debug(os.getcwd())
         filename = os.path.basename(LOG_PATH)
         att = MIMEText(open(LOG_PATH, 'rb').read(), 'base64', 'utf-8')
         att["Content-Type"] = 'application/octet-stream'
@@ -213,12 +221,15 @@ class EmailHandler:
 
 @apply_log_method_to_all_methods
 class YoutubeRSSHandler:
-    def __init__(self, max_days_difference = 14, max_trial_num = 10, suber=[], url=""):
+    def __init__(self, last_success_time = 0.0, max_days_difference = 14, max_trial_num = 10, subers=[], url=""):
         # self.url = "https://rsshub.app/youtube/user/@HalcyonMusic"
         self.max_days_difference = max_days_difference
         self.max_trial_num = max_trial_num
-        self.suber = suber
+        self.latest_time = last_success_time
+        self._latest_time_str = ""
+        # logger.debug(self.latest_time)
         self.url = url
+        self.subers = subers
         self.proxy_dict = {
             'http': '127.0.0.1:51837',
             'https': '127.0.0.1:51837',
@@ -226,7 +237,7 @@ class YoutubeRSSHandler:
 
 
     def notify_subers(self, num):
-        for suber in self.suber:
+        for suber in self.subers:
             suber.utilize_nums(num)
 
     def get_sheet_number(self):
@@ -236,17 +247,22 @@ class YoutubeRSSHandler:
             feed = feedparser.parse(response.text)
 
             logger.info("Feed Title: " + feed.feed.title)
-            # 遍历 RSS 条目并打印标题和链接
+            # enum rss
             current_tried_num = 0
             for entry in feed.entries:
                 if 'published' in entry:
-                    # 发布日期通常以 RFC 2822 或 ISO 8601 格式存储
                     published_date_str = entry.published
-                    published_date = datetime.strptime(published_date_str, "%a, %d %b %Y %H:%M:%S %Z")  # 解析为 datetime 对象
+                    published_date = datetime.strptime(published_date_str, "%a, %d %b %Y %H:%M:%S %Z")
+
+                    # logger.debug(str(published_date.timestamp()) + " " + str(published_date.timestamp() +3600) + " " + str(self.latest_time)  )
+                    if published_date.timestamp() <= self.latest_time:
+                        logger.warn("No more sheets")
+                        break
+
                     days_difference = (datetime.now() - published_date).days
-                    logger.info("标题:", entry.title)
-                    logger.info("发布日期:", published_date)
-                    logger.info("距离当前天数:", days_difference, "天")
+                    logger.info("标题:"+entry.title)
+                    logger.info("发布日期:"+str(published_date))
+                    logger.info("距离当前天数:"+str(days_difference) + "天")
                     if days_difference > self.max_days_difference:
                         logger.warning("距离当前天数超过阈值，跳过")
                         continue
@@ -270,6 +286,9 @@ class YoutubeRSSHandler:
                         if match:
                             extracted_number = match.group()
                             logger.info("Extracted Number:" + extracted_number)
+                            if not self._latest_time_str:
+                                logger.debug(f"set latest time to { str(int(published_date.timestamp()))}")
+                                self._latest_time_str = str(int(published_date.timestamp()))
                             self.notify_subers(extracted_number)
                             time.sleep(0.5)
                             sheet_url_matched = True
@@ -283,9 +302,72 @@ class YoutubeRSSHandler:
         else:
             logger.error("Failed to retrieve RSS data. Status code: " + response.status_code)
 
+    @property
+    def latest_time_str(self):
+        return self._latest_time_str
 
+
+class GithubAPI:
+    def __init__(self, token, owner_repo):
+        # self.token = token
+        self.headers = {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': f'Bearer {token}',
+            'X-GitHub-Api-Version': '2022-11-28',
+        }
+        self.owner_repo = owner_repo
+
+
+    def create_variables(self, name, value) -> bool:
+        data = {
+            'name': name,
+            'value': value
+        }
+        url = f'https://api.github.com/repos/{self.owner_repo}/actions/variables'
+        response = requests.post(url, headers=self.headers, json=data)
+        # logger.debug(response.text)
+        return response.status_code==201
+
+
+    def update_variables(self, name, value) -> bool:
+        try:
+            data = {
+                'name': name,
+                'value': value
+            }
+            url = f'https://api.github.com/repos/{self.owner_repo}/actions/variables/{name}'
+            response = requests.patch(url, headers=self.headers, json=data)
+            logger.debug(response.text)
+        except Exception as e:
+            logger.error(str(e))
+        return response.status_code==204
+
+
+#TODO 
+class BaseUploader:
+    def __init__(self):
+        pass
+
+    def upload(self, file_path):
+        return NotImplementedError
+
+class ODUploader:
+    def __init__(self):
+        pass
+
+    def upload(self, file_path):
+        return NotImplementedError
+
+class GDUploader:
+    def __init__(self):
+        pass
+
+    def upload(self, file_path):
+        return NotImplementedError
+        
 
 if __name__ == "__main__":
+    # 0. get config
     if IS_LOCAL_ENV:
         import yaml
         with open('.localconfig.yaml', 'r') as file:
@@ -314,30 +396,75 @@ if __name__ == "__main__":
         max_trial_num = os.environ.get('RSS_max_trial_num')
 
         sender = os.environ.get('Email_sender')
-        receivers = os.environ.get('Email_receivers')
+        receivers = [os.environ.get('Email_receivers')] # TODO
         smtp_host = os.environ.get('Email_smtp_host')
         smtp_port = os.environ.get('Email_smtp_port')
-        mail_license = os.environ.get('Email_mail_license')
-        
-    # GO!
+        mail_license = os.environ.get('Email_mail_license') 
+
+        github_repo_token = os.environ.get('GITHUB_REPO_TOKEN')
+        github_owner_repo = os.environ.get('GITHUB_OWNER_REPO')
+        last_success_video_time = os.environ.get(LAST_SUCCESS_VAR_NAME)
+
+        # logger.debug(last_success_video_time)
+
+
+    ################################  Run  ################################
+    ## 1. start GithubAPI
+    gh_api = GithubAPI(github_repo_token,github_owner_repo)
+    last_time_inited = True
+    if not last_success_video_time:
+        last_time_inited = False
+        last_success_time = (datetime.now() - timedelta(days=365)).timestamp()
+        logger.debug("no last")
+    else:
+        last_success_time = float(last_success_video_time)
+        logger.debug("has last")
+        # logger.debug(str(last_success_video_time))
+
+
+    ## 2. start mms handler
     mms = MMS(email, password, savefolder_path)
 
-    yt_rss = YoutubeRSSHandler(suber=[mms], url = rss_url)
+
+    ## 3. start RSS handler
+    yt_rss = YoutubeRSSHandler(last_success_time=last_success_time, subers=[mms], url = rss_url)
     yt_rss.get_sheet_number()
 
+
+    ## 4. start email handler
     email_handler = EmailHandler(sender, smtp_host, smtp_port,mail_license,receivers)
 
-    if mms.success:
-        subject = "Successfully downloading Halcyon sheets"
-        content = "Success!"
-        logger.info("All sheets downloaded successfully")
 
-    else:
+    ## 5. check result and prepare mail data
+    if mms.success:
+        if len(mms.file_paths) > 0: # There are new sheets
+            ## update last time
+            try:
+                if not last_time_inited:
+                    gh_api.create_variables(LAST_SUCCESS_VAR_NAME, yt_rss.latest_time_str)
+                else:
+                    gh_api.update_variables(LAST_SUCCESS_VAR_NAME, yt_rss.latest_time_str)
+                subject = "Successfully downloading Halcyon sheets"
+                content = "Success!"
+                logger.info("All sheets downloaded successfully")
+            except: # github cli error
+                subject = "Successfully downloading Halcyon sheets BUT Somthing wrong with GithubAPI"
+                content = "Somthing wrong with github cli"
+                logger.info("Somthing wrong with GithubAPI")
+
+        else:   # nothing new
+            subject = "There's no new sheet of Halcyon"
+            content = "Nothing!"
+            logger.info("There's no new sheet")
+
+    else:   # download error
         subject = "Failed to download Halcyon sheets"
         content = "Failed..."
         logger.error("Failed to download some sheets")
 
+
+    ## 6. send email
     email_handler.perform_sending(subject, content, files=mms.file_paths)
 
-#TODO
-#2. GH自动存储和更新上一次数据
+
+
