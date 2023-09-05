@@ -1,0 +1,43 @@
+name: active download
+
+on:
+  push:
+    branches:
+      - main  # 指定你希望在哪个分支上收到 push 时触发工作流
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set Secrets as Environment Variables
+      run: |
+        echo "export MMS_email=$MMS_email" >> $GITHUB_ENV
+        echo "export MMS_email=$MMS_password" >> $MMS_password
+        echo "export MMS_email=$MMS_savefolder_path" >> $MMS_savefolder_path
+
+        echo "export MMS_email=$RSS_url" >> $RSS_url
+        echo "export MMS_email=$RSS_max_days_difference" >> $RSS_max_days_difference
+        echo "export MMS_email=$RSS_max_trial_num" >> $RSS_max_trial_num
+
+        echo "export MMS_email=$Email_sender" >> $Email_sender
+        echo "export MMS_email=$Email_receivers" >> $Email_receivers
+        echo "export MMS_email=$Email_smtp_host" >> $Email_smtp_host
+        echo "export MMS_email=$Email_smtp_port" >> $Email_smtp_port
+        echo "export MMS_email=$Email_mail_license" >> $Email_mail_license
+        
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x  # 指定 Python 版本
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run Python script
+      run: python main.py
