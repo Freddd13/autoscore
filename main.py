@@ -255,6 +255,7 @@ class YoutubeRSSHandler:
                     published_date = datetime.strptime(published_date_str, "%a, %d %b %Y %H:%M:%S %Z")
 
                     # logger.debug(str(published_date.timestamp()) + " " + str(published_date.timestamp() +3600) + " " + str(self.latest_time)  )
+                    logger.debug(f"publish-last {published_date.timestamp() - self.latest_time}")
                     if published_date.timestamp() <= self.latest_time:
                         logger.warn("No more sheets")
                         break
@@ -478,7 +479,7 @@ class LocalStrategy(BaseStrategy):
         
 
 if __name__ == "__main__":
-    # 0. get config
+    ## 0. get config
     env = os.environ.get('AUTO_HALCYON_ENV')
     assert env
 
