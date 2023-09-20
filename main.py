@@ -225,9 +225,9 @@ class YoutubeRSSHandler:
         # self.url = "https://rsshub.app/youtube/user/@HalcyonMusic"
         self.max_days_difference = max_days_difference
         self.max_trial_num = max_trial_num
-        self.latest_time = last_success_time
+        self._last_success_time = last_success_time
         self._latest_time_str = ""
-        # logger.debug(self.latest_time)
+        # logger.debug(self._last_success_time)
         self.url = url
         self.subers = subers
         self.proxy_dict = {
@@ -254,9 +254,9 @@ class YoutubeRSSHandler:
                     published_date_str = entry.published
                     published_date = datetime.strptime(published_date_str, "%a, %d %b %Y %H:%M:%S %Z")
 
-                    # logger.debug(str(published_date.timestamp()) + " " + str(published_date.timestamp() +3600) + " " + str(self.latest_time)  )
-                    logger.debug(f"publish-last {published_date.timestamp() - self.latest_time}")
-                    if published_date.timestamp() <= self.latest_time:
+                    # logger.debug(str(published_date.timestamp()) + " " + str(published_date.timestamp() +3600) + " " + str(self._last_success_time)  )
+                    logger.debug(f"publish-last {published_date.timestamp() - self._last_success_time}")
+                    if published_date.timestamp() <= self._last_success_time:
                         logger.warn("No more sheets")
                         break
 
@@ -526,7 +526,7 @@ if __name__ == "__main__":
         if len(mms.file_paths) > 0: # There are new sheets
             ## update last time
             try:
-                strategy.update_last_success_time(str(yt_rss.latest_time))
+                strategy.update_last_success_time(yt_rss.latest_time_str)
 
                 subject = "Successfully downloading Halcyon sheets"
                 content = "Success!"
