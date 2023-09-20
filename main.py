@@ -364,9 +364,11 @@ class BaseStrategy:
 
 class GithubActionStrategy(BaseStrategy):
     def __init__(self):
+        logger.info("Using Github Action Strategy")
         super().__init__()
         self.load_config()
         self.gh_api = GithubAPI(self._github_repo_token, self._github_owner_repo)
+        self.get_last_success_time()
 
     def load_config(self):
         self.email = os.environ.get('MMS_email')
@@ -400,7 +402,10 @@ class GithubActionStrategy(BaseStrategy):
 
 class DockerStrategy(BaseStrategy):
     def __init__(self):
+        logger.info("Using DockerStrategy")
         super().__init__()
+        self.load_config()
+        self.get_last_success_time()
 
     def load_config(self):
         import yaml
@@ -429,13 +434,16 @@ class DockerStrategy(BaseStrategy):
         # 从.last_success_time文件中读取时间
         if os.path.exists('.last_success_time'):
             with open('.last_success_time', 'r') as f:
-                self.last_success_video_time =  f.read()
+                self.last_success_video_time =  f.readline()
 
 
 
 class LocalStrategy(BaseStrategy):
     def __init__(self):
+        logger.info('Using LocalStrategy')
         super().__init__()
+        self.load_config()
+        self.get_last_success_time()
 
     def load_config(self):
         import yaml
@@ -466,7 +474,7 @@ class LocalStrategy(BaseStrategy):
         # 从.last_success_time文件中读取时间
         if os.path.exists('.last_success_time'):
             with open('.last_success_time', 'r') as f:
-                self.last_success_video_time =  f.read() 
+                self.last_success_video_time =  f.readline() 
         
 
 if __name__ == "__main__":
@@ -487,7 +495,7 @@ if __name__ == "__main__":
 
     ################################  Run  ################################
     ## 1. get last success time
-    last_success_video_time = strategy.get_last_success_time()
+    last_success_video_time = strategy.last_success_video_time
     if not last_success_video_time:
         last_success_time = (datetime.now() - timedelta(days=365)).timestamp()
         logger.debug("no last")
