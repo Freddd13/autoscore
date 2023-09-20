@@ -398,6 +398,7 @@ class GithubActionStrategy(BaseStrategy):
         
     def get_last_success_time(self):
         self.last_success_video_time = os.environ.get(LAST_SUCCESS_VAR_NAME)
+        logger.debug("action env get last_success_video_time: " + str(self.last_success_video_time))
 
 
 
@@ -497,6 +498,7 @@ if __name__ == "__main__":
     ################################  Run  ################################
     ## 1. get last success time
     last_success_video_time = strategy.last_success_video_time
+    logger.debug("main step 1 last_success_video_time: " + str(last_success_video_time))
     if not last_success_video_time:
         last_success_time = (datetime.now() - timedelta(days=365)).timestamp()
         logger.debug("no last")
