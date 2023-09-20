@@ -23,6 +23,8 @@ jobs:
 
     - name: Run Python script
       env:
+        AUTO_HALCYON_ENV: GITHUB_ACTION
+        
         MMS_email: ${{ secrets.MMS_email }}
         MMS_password: ${{ secrets.MMS_password }}
         MMS_savefolder_path: ${{ secrets.MMS_savefolder_path }}
