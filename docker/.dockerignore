@@ -1,4 +1,5 @@
-../files
-../old
-../.last_success_time
-../.localconfig.yaml
+./files
+./old
+./.last_success_time
+./app.log
+./.vscode

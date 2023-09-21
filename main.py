@@ -301,7 +301,7 @@ class YoutubeRSSHandler:
                         logger.warning(str(entry.link) + " not matched")
                         # print(entry.summary)
         else:
-            logger.error("Failed to retrieve RSS data. Status code: " + response.status_code)
+            logger.error(f"Failed to retrieve RSS data. Status code: {response.status_code}")
 
     @property
     def latest_time_str(self):

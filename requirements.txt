@@ -1,5 +1,6 @@
 feedparser
-requests==2.27.1
+requests
 pytz
 msal
 tqdm
+pyyaml
