@@ -21,19 +21,32 @@ Which secret need to set can be found in the .github/workflow/*.yml --> env:
 Then the action will be triggered when pushing to repo or reaching a certain time everyday. The latter can be set in the auto_download.yml. 
 
 ### Use Docker
-1. Clone this repo
-2. Create a .localconfig.yaml from localconfig.yaml and fill in your data. 
-3. `docker build -t auto-halcyon -f docker/Dockerfile .`
-4. `docker run -d --name auto_halcyon auto-halcyon:latest`
-The schedule task can be adjusted by modifing the ./docker/crontab.
+1. Download the config file:
+```
+wget https://github.com/Freddd13/auto-Halcyon/blob/main/localconfig.yaml?raw=true -O .localconfig.yaml
+```
+2. Replace your own data in the yaml above.
+3. Download image and run:
+```
+docker pull fredyu13/auto-halcyon
+docker run -d --name auto-halcyon -v $(pwd)/.localconfig.yaml:/app/.localconfig.yaml fredyu13/auto-halcyon
+```
 
-### Develop locally
+
+## Develop
+### Run locally
 1. Clone this repo
 2. Create a .localconfig.yaml from localconfig.yaml and fill in your data. 
 3. `pip install -r requirements.txt`
 4. Set env `AUTO_HALCYON_ENV` to `LOCAL`
 4. `python main.py`
 
+### Build Docker
+1. Clone this repo
+2. Create a .localconfig.yaml from localconfig.yaml and fill in your data. 
+3. `docker build -t auto-halcyon -f docker/Dockerfile .`
+4. `docker run -d --name auto_halcyon auto-halcyon:latest`
+The schedule task can be adjusted by modifing the ./docker/crontab.
 ## TODO
 - [x] Email notification
 - [x] Ignore History downloaded sheets
