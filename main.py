@@ -352,6 +352,7 @@ class GithubActionStrategy(BaseStrategy):
         self.max_days_difference = os.environ.get('RSS_max_days_difference')
         self.max_trial_num = os.environ.get('RSS_max_trial_num')
 
+        self.enable_email_notify = bool(os.environ.get('enable_email_notify'))
         self.sender = os.environ.get('Email_sender')
         self.receivers = [os.environ.get('Email_receivers')] # TODO
         self.smtp_host = os.environ.get('Email_smtp_host')
@@ -383,6 +384,7 @@ class DockerStrategy(BaseStrategy):
         self.max_days_difference = yaml_data['RSS']['max_days_difference']
         self.max_trial_num = yaml_data['RSS']['max_trial_num']
 
+        self.enable_email_notify = bool(yaml_data['Email']['enable_email_notify'])
         self.sender = yaml_data['Email']['sender']
         self.receivers = yaml_data['Email']['receivers']
         self.smtp_host = yaml_data['Email']['smtp_host']
@@ -410,6 +412,7 @@ class LocalStrategy(BaseStrategy):
         self.max_days_difference = yaml_data['RSS']['max_days_difference']
         self.max_trial_num = yaml_data['RSS']['max_trial_num']
 
+        self.enable_email_notify = bool(yaml_data['Email']['enable_email_notify'])
         self.sender = yaml_data['Email']['sender']
         self.receivers = yaml_data['Email']['receivers']
         self.smtp_host = yaml_data['Email']['smtp_host']
@@ -452,10 +455,7 @@ if __name__ == "__main__":
     yt_rss = YoutubeRSSHandler(last_success_time=last_success_time, subers=[mms], url = strategy.rss_url)
     yt_rss.get_sheet_number()
 
-    ## 4. start email handler
-    email_handler = EmailHandler(strategy.sender, strategy.smtp_host, strategy.smtp_port, strategy.mail_license, strategy.receivers)
-
-    ## 5. check result and prepare mail data
+    ## 4. check result and prepare mail data
     if mms.success:
         if len(mms.file_paths) > 0: # There are new sheets
             strategy.update_last_success_time(yt_rss.latest_time_str)
@@ -474,8 +474,10 @@ if __name__ == "__main__":
         content = "Failed..."
         logger.error("Failed to download some sheets")
 
-    ## 6. send email
-    email_handler.perform_sending(subject, content, files=mms.file_paths)
+    ## 5. send email
+    if strategy.enable_email_notify:
+        email_handler = EmailHandler(strategy.sender, strategy.smtp_host, strategy.smtp_port, strategy.mail_license, strategy.receivers)
+        email_handler.perform_sending(subject, content, files=mms.file_paths)
 
 
 

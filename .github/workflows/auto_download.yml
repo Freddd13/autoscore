@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: 3.x  # 指定 Python 版本
 
@@ -36,16 +36,17 @@ jobs:
         RSS_max_days_difference: ${{ secrets.RSS_max_days_difference }}
         RSS_max_trial_num: ${{ secrets.RSS_max_trial_num }}
         
+        enable_email_notify: ${{ secrets.enable_email_notify }}
         Email_sender: ${{ secrets.Email_sender }}
         Email_receivers: ${{ secrets.Email_receivers }}
         Email_smtp_host: ${{ secrets.Email_smtp_host }}
         Email_smtp_port: ${{ secrets.Email_smtp_port }}
         Email_mail_license: ${{ secrets.Email_mail_license }}
 
-        GITHUB_REPO_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+        # GITHUB_REPO_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
         # REPO_NAME: ${{ github.event.repository.name }}  # https://stackoverflow.com/questions/62803531/repository-name-as-a-github-action-environment-variable
-        GITHUB_OWNER_REPO: ${{ github.repository }}
-        LAST_SUCCESS_VIDEO_TIME: ${{ vars.LAST_SUCCESS_VIDEO_TIME }}
+        # GITHUB_OWNER_REPO: ${{ github.repository }}
+        # LAST_SUCCESS_VIDEO_TIME: ${{ vars.LAST_SUCCESS_VIDEO_TIME }}
 
         IGNORE_HISTORY_DOWNLOAD: 1
 

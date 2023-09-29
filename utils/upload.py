@@ -1,7 +1,7 @@
 '''
 Date: 2023-09-20 22:55:49
-LastEditors: kumo
-LastEditTime: 2023-09-20 22:55:49
+LastEditors: Kumo
+LastEditTime: 2023-09-29 15:34:20
 Description: 
 '''
 
@@ -13,14 +13,14 @@ class BaseUploader:
     def upload(self, file_path):
         return NotImplementedError
 
-class ODUploader:
+class ODUploader(BaseUploader):
     def __init__(self):
         pass
 
     def upload(self, file_path):
         return NotImplementedError
 
-class GDUploader:
+class GDUploader(BaseUploader):
     def __init__(self):
         pass
 

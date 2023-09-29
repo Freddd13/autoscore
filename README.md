@@ -11,12 +11,26 @@ Note: Currently we use [Youtube user route rss from RSSHub](https://docs.rsshub.
 For more info, please check [RSSHub doc](https://docs.rsshub.app/).
 
 ## Usage
+### User config
+| Variable                  | Description                                         | Example Value          |
+|---------------------------|-----------------------------------------------------|------------------------|
+| `MMS_email`               | Email associated with MMS website.                | `user@example.com`     |
+| `MMS_password`            | Password for the MMS.                        | `passwordiiyokoiyo`          |
+| `MMS_savefolder_path`     | Path to the save folder for MMS.                   | `files` (recommended)      |
+| `RSS_url`                 | URL of the RSS feed.                               | `https://rsshub.app/youtube/user/@HalcyonMusic`|
+| `RSS_max_days_difference` | Maximum allowable day difference for RSS entries.  | `14`  (recommended)                    |
+| `RSS_max_trial_num`       | Maximum number of video posts attempt to download.     | `10` (recommended)                    |
+| `enable_email_notify`      | Whether to notify downloading result via email  (1 enable, 0 disable)  | `1`  |
+| `Email_sender`            | Email address used to send emails.                 | `sender@example.com`   |
+| `Email_receivers`         | Email addresses designated to receive emails.      | `receiver@example.com` |
+| `Email_smtp_host`         | SMTP server address used to send emails.           | `smtp.example.com`     |
+| `Email_smtp_port`         | SMTP server port used to send emails.              | `11451`                  |
+| `Email_mail_license`      | SMTP password or authorization used for sending emails.  | `1145141919810`  |
+<br>
 ### Use Github Action
 1. Fork the repo
-2. Use your own information to set the needed secrets in your repo. You need an email with SMTP host, port, account and app password.
-Which secret need to set can be found in the .github/workflow/*.yml --> env:
-3. Generate a personal Github access token in the Github settings - developer settings, and give the permission of reading && writing the repo VARIABLES to the token. Set this token as the value of PERSONAL_TOKEN in the repo secrets. 
-4. Enable the action in the forked repos' ACTION by clicking the green button with "I understand XXX" (Well, I guess... lazy to test)
+2. Use your own information to set the needed secrets in your repo(Repo Settings -- Secrets and variables -- Actions -- Secrets). You need an email with SMTP host, port, account and app password. Check out [User config](#(User-config)) for the full config we need.
+3. Enable Workflow r/w permissions
 
 Then the action will be triggered when pushing to repo or reaching a certain time everyday. The latter can be set in the auto_download.yml. 
 
@@ -25,7 +39,8 @@ Then the action will be triggered when pushing to repo or reaching a certain tim
 ```
 wget https://github.com/Freddd13/auto-Halcyon/blob/main/localconfig.yaml?raw=true -O .localconfig.yaml
 ```
-2. Replace your own data in the yaml above.
+2. Replace your own data in the yaml above. Check out [User config](#(User-config)) for the full config we need.
+3. Enable Workflow r/w permissions
 3. Download image and run:
 ```
 docker pull fredyu13/auto-halcyon
@@ -36,7 +51,8 @@ docker run -d --name auto-halcyon -v $(pwd)/.localconfig.yaml:/app/.localconfig.
 ## Develop
 ### Run locally
 1. Clone this repo
-2. Create a .localconfig.yaml from localconfig.yaml and fill in your data. 
+2. Create a .localconfig.yaml from localconfig.yaml and fill in your data. Check out [User config](#(User-config)) for the full config we need.
+3. Enable Workflow r/w permissions
 3. `pip install -r requirements.txt`
 4. Set env `AUTO_HALCYON_ENV` to `LOCAL`
 4. `python main.py`
@@ -51,7 +67,7 @@ The schedule task can be adjusted by modifing the ./docker/crontab.
 - [x] Email notification
 - [x] Ignore History downloaded sheets
 - [x] Docker support
-- [ ] Save to Onedrive
+- [ ] Save to Onedrive/Cloudreve
 
 
 # Disclaimer:

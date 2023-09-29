@@ -9,6 +9,7 @@ RSS:
   max_trial_num: 233
 
 Email:
+  enable_email_notify: 1
   sender: 233
   receivers: 233
   smtp_host: 233
