@@ -50,3 +50,16 @@ jobs:
         IGNORE_HISTORY_DOWNLOAD: 1
 
       run: python main.py
+
+    - name: Setup GIT user
+      uses: fregante/setup-git-user@v1
+
+    - name: Save last success time
+      run: |
+        git add .
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Update last success time"
+          git push
+        fi

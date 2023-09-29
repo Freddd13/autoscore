@@ -1,12 +1,12 @@
 import requests
 import feedparser
-import getpass
 
 from datetime import datetime, timedelta
-import json
 import time
 import re
 import os
+import getpass
+import json
 
 import smtplib, ssl
 from email.mime.text import MIMEText
@@ -266,7 +266,7 @@ class YoutubeRSSHandler:
                     logger.info("距离当前天数:"+str(days_difference) + "天")
                     if days_difference > self.max_days_difference:
                         logger.warning("距离当前天数超过阈值，跳过")
-                        continue
+                        break
                 if current_tried_num >= self.max_trial_num:
                     break
                 else:
@@ -308,44 +308,8 @@ class YoutubeRSSHandler:
         return self._latest_time_str
 
 
-class GithubAPI:
-    def __init__(self, token, owner_repo):
-        # self.token = token
-        self.headers = {
-            'Accept': 'application/vnd.github+json',
-            'Authorization': f'Bearer {token}',
-            'X-GitHub-Api-Version': '2022-11-28',
-        }
-        self.owner_repo = owner_repo
-
-
-    def create_variables(self, name, value) -> bool:
-        data = {
-            'name': name,
-            'value': value
-        }
-        url = f'https://api.github.com/repos/{self.owner_repo}/actions/variables'
-        response = requests.post(url, headers=self.headers, json=data)
-        # logger.debug(response.text)
-        return response.status_code==201
-
-
-    def update_variables(self, name, value) -> bool:
-        try:
-            data = {
-                'name': name,
-                'value': value
-            }
-            url = f'https://api.github.com/repos/{self.owner_repo}/actions/variables/{name}'
-            response = requests.patch(url, headers=self.headers, json=data)
-            logger.debug(response.text)
-        except Exception as e:
-            logger.error(str(e))
-        return response.status_code==204
-
-
-
-##################### strategies
+##################### strategies ##################### 
+@apply_log_method_to_all_methods
 class BaseStrategy:
     def __init__(self):
         self.last_success_video_time = None
@@ -356,19 +320,27 @@ class BaseStrategy:
     def load_config(self):
         return NotImplementedError
 
-    def update_last_success_time(self):
-        return NotImplementedError
+    def get_last_success_time(self):
+        # 从.last_success_time文件中读取时间
+        logger.info(str(os.listdir('.')))
+        if os.path.exists('_last_success_time'):
+            with open('_last_success_time', 'r') as f:
+                self.last_success_video_time =  f.readline()
+                logger.info(f"_last_success {self.last_success_video_time}")
 
-    def is_last_success_exists(self):
-        return NotImplementedError
+    def update_last_success_time(self, latest_time_str):
+        # 将时间写入当前目前.last_success_time文件
+        with open('_last_success_time', 'w') as f:
+            f.write(latest_time_str)
 
 
+@apply_log_method_to_all_methods
 class GithubActionStrategy(BaseStrategy):
     def __init__(self):
         logger.info("Using Github Action Strategy")
         super().__init__()
         self.load_config()
-        self.gh_api = GithubAPI(self._github_repo_token, self._github_owner_repo)
+        # self.gh_api = GithubAPI(self._github_repo_token, self._github_owner_repo)
         self.get_last_success_time()
 
     def load_config(self):
@@ -387,21 +359,11 @@ class GithubActionStrategy(BaseStrategy):
         self.mail_license = os.environ.get('Email_mail_license') 
 
         # private
-        self._github_repo_token = os.environ.get('GITHUB_REPO_TOKEN')
-        self._github_owner_repo = os.environ.get('GITHUB_OWNER_REPO')
-
-    def update_last_success_time(self, latest_time_str):
-        if not self.last_success_video_time:
-            self.gh_api.create_variables(LAST_SUCCESS_VAR_NAME, latest_time_str)
-        else:
-            self.gh_api.update_variables(LAST_SUCCESS_VAR_NAME, latest_time_str)        
-        
-    def get_last_success_time(self):
-        self.last_success_video_time = os.environ.get(LAST_SUCCESS_VAR_NAME)
-        logger.debug("action env get last_success_video_time: " + str(self.last_success_video_time))
+        # self._github_repo_token = os.environ.get('GITHUB_REPO_TOKEN')
+        # self._github_owner_repo = os.environ.get('GITHUB_OWNER_REPO')
 
 
-
+@apply_log_method_to_all_methods
 class DockerStrategy(BaseStrategy):
     def __init__(self):
         logger.info("Using DockerStrategy")
@@ -427,19 +389,8 @@ class DockerStrategy(BaseStrategy):
         self.smtp_port = yaml_data['Email']['smtp_port']
         self.mail_license = yaml_data['Email']['mail_license']
 
-    def update_last_success_time(self, latest_time_str):
-        # 将时间写入当前目前.last_success_time文件
-        with open('.last_success_time', 'w') as f:
-            f.write(latest_time_str)
 
-    def get_last_success_time(self):
-        # 从.last_success_time文件中读取时间
-        if os.path.exists('.last_success_time'):
-            with open('.last_success_time', 'r') as f:
-                self.last_success_video_time =  f.readline()
-
-
-
+@apply_log_method_to_all_methods
 class LocalStrategy(BaseStrategy):
     def __init__(self):
         logger.info('Using LocalStrategy')
@@ -464,19 +415,6 @@ class LocalStrategy(BaseStrategy):
         self.smtp_host = yaml_data['Email']['smtp_host']
         self.smtp_port = yaml_data['Email']['smtp_port']
         self.mail_license = yaml_data['Email']['mail_license']
-
-
-    def update_last_success_time(self, latest_time_str):
-        # 将时间写入当前目前.last_success_time文件
-        with open('.last_success_time', 'w') as f:
-            f.write(latest_time_str)
-
-
-    def get_last_success_time(self):
-        # 从.last_success_time文件中读取时间
-        if os.path.exists('.last_success_time'):
-            with open('.last_success_time', 'r') as f:
-                self.last_success_video_time =  f.readline() 
         
 
 if __name__ == "__main__":
@@ -507,34 +445,24 @@ if __name__ == "__main__":
         logger.debug("has last")
         # logger.debug(str(last_success_video_time))
 
-
     ## 2. start mms handler
     mms = MMS(strategy.email, strategy.password, strategy.savefolder_path)
-
 
     ## 3. start RSS handler
     yt_rss = YoutubeRSSHandler(last_success_time=last_success_time, subers=[mms], url = strategy.rss_url)
     yt_rss.get_sheet_number()
 
-
     ## 4. start email handler
     email_handler = EmailHandler(strategy.sender, strategy.smtp_host, strategy.smtp_port, strategy.mail_license, strategy.receivers)
-
 
     ## 5. check result and prepare mail data
     if mms.success:
         if len(mms.file_paths) > 0: # There are new sheets
-            ## update last time
-            try:
-                strategy.update_last_success_time(yt_rss.latest_time_str)
+            strategy.update_last_success_time(yt_rss.latest_time_str)
 
-                subject = "Successfully downloading Halcyon sheets"
-                content = "Success!"
-                logger.info("All sheets downloaded successfully")
-            except: # github cli error
-                subject = "Successfully downloading Halcyon sheets BUT Somthing wrong with GithubAPI"
-                content = "Somthing wrong with github cli"
-                logger.info("Somthing wrong with GithubAPI")
+            subject = "Successfully downloading Halcyon sheets"
+            content = "Success!"
+            logger.info("All sheets downloaded successfully")
 
         else:   # nothing new
             subject = "There's no new sheet of Halcyon"
@@ -545,7 +473,6 @@ if __name__ == "__main__":
         subject = "Failed to download Halcyon sheets"
         content = "Failed..."
         logger.error("Failed to download some sheets")
-
 
     ## 6. send email
     email_handler.perform_sending(subject, content, files=mms.file_paths)
