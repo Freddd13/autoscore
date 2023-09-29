@@ -7,9 +7,6 @@ Use RSS to get channel's latest video data, parse its sheet links and auto downl
 Finally we send files via email or upload to onedrive(TODO).
 The sensitive data is saved in Github repo's secrets thus it's safe.
 
-Note: Currently we use [Youtube user route rss from RSSHub](https://docs.rsshub.app/routes/social-media#youtube-user). The url should be something like `https://rsshub.app/youtube/user/@HalcyonMusic`. The domain is strongly recommended to replaced with yours, because the public hub can be banned by source sites sometimes.
-For more info, please check [RSSHub doc](https://docs.rsshub.app/).
-
 ## Usage
 ### User config
 | Variable                  | Description                                         | Example Value          |
@@ -20,7 +17,7 @@ For more info, please check [RSSHub doc](https://docs.rsshub.app/).
 | `RSS_url`                 | URL of the RSS feed.                               | `https://rsshub.app/youtube/user/@HalcyonMusic`|
 | `RSS_max_days_difference` | Maximum allowable day difference for RSS entries.  | `14`  (recommended)                    |
 | `RSS_max_trial_num`       | Maximum number of video posts attempt to download.     | `10` (recommended)                    |
-| `enable_email_notify`      | Whether to notify downloading result via email  (1 enable, 0 disable)  | `1`  |
+| `enable_email_notify`      | Whether to notify downloading result via email  (1 enable, 0 disable)  | `1` |
 | `Email_sender`            | Email address used to send emails.                 | `sender@example.com`   |
 | `Email_receivers`         | Email addresses designated to receive emails.      | `receiver@example.com` |
 | `Email_smtp_host`         | SMTP server address used to send emails.           | `smtp.example.com`     |
@@ -29,8 +26,11 @@ For more info, please check [RSSHub doc](https://docs.rsshub.app/).
 <br>
 ### Use Github Action
 1. Fork the repo
-2. Use your own information to set the needed secrets in your repo(Repo Settings -- Secrets and variables -- Actions -- Secrets). You need an email with SMTP host, port, account and app password. Check out [User config](#(User-config)) for the full config we need.
+2. Use your own information to set the needed secrets in your repo(Repo Settings -- Secrets and variables -- Actions -- Secrets). You need an email with SMTP host, port, account and app password. Check out [User config](#(User%20config)) for the full config we need.
+![](docs/add_secrets.png)
 3. Enable Workflow r/w permissions
+Settings -- Actions -- General
+![](docs/enable_rw.png)
 
 Then the action will be triggered when pushing to repo or reaching a certain time everyday. The latter can be set in the auto_download.yml. 
 
@@ -39,7 +39,7 @@ Then the action will be triggered when pushing to repo or reaching a certain tim
 ```
 wget https://github.com/Freddd13/auto-Halcyon/blob/main/localconfig.yaml?raw=true -O .localconfig.yaml
 ```
-2. Replace your own data in the yaml above. Check out [User config](#(User-config)) for the full config we need.
+2. Replace your own data in the yaml above. Check out [User config](#(User%20config)) for the full config we need.
 3. Enable Workflow r/w permissions
 3. Download image and run:
 ```
@@ -47,11 +47,10 @@ docker pull fredyu13/auto-halcyon
 docker run -d --name auto-halcyon -v $(pwd)/.localconfig.yaml:/app/.localconfig.yaml fredyu13/auto-halcyon
 ```
 
-
 ## Develop
 ### Run locally
 1. Clone this repo
-2. Create a .localconfig.yaml from localconfig.yaml and fill in your data. Check out [User config](#(User-config)) for the full config we need.
+2. Create a .localconfig.yaml from localconfig.yaml and fill in your data. Check out [User config](#(User%20config)) for the full config we need.
 3. Enable Workflow r/w permissions
 3. `pip install -r requirements.txt`
 4. Set env `AUTO_HALCYON_ENV` to `LOCAL`
@@ -63,6 +62,16 @@ docker run -d --name auto-halcyon -v $(pwd)/.localconfig.yaml:/app/.localconfig.
 3. `docker build -t auto-halcyon -f docker/Dockerfile .`
 4. `docker run -d --name auto_halcyon auto-halcyon:latest`
 The schedule task can be adjusted by modifing the ./docker/crontab.
+
+## Note
+### About RSS
+Currently the repo depends on [Youtube user route rss from RSSHub](https://docs.rsshub.app/routes/social-media#youtube-user). The url should be something like `https://rsshub.app/youtube/user/@HalcyonMusic`. The domain is strongly recommended to replaced with yours, because the public hub can be banned by source sites sometimes. And self-hosting one is quite benefit for your other future usage.
+For more info, please check [RSSHub doc](https://docs.rsshub.app/).
+
+### About Email
+The `enable_email_notify` is used to send you downloading result including sheets and app log. If you disable the email, there's still another way to save your sheets: remove the `MMS_savefolder_path` directory if it exists in the `.gitignore`. The action will update the downloaded sheets to your repo. But it's not a good behavior to share others' sheets without permission, thus it's not recommended to disable email before other uploading method is supported.
+
+
 ## TODO
 - [x] Email notification
 - [x] Ignore History downloaded sheets
