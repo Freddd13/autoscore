@@ -26,7 +26,7 @@ The sensitive data is saved in Github repo's secrets thus it's safe.
 <br>
 ### Use Github Action
 1. Fork the repo
-2. Use your own information to set the needed secrets in your repo(Repo Settings -- Secrets and variables -- Actions -- Secrets). You need an email with SMTP host, port, account and app password. Check out [User config](#(User%20config)) for the full config we need.
+2. Use your own information to set the needed secrets in your repo(Repo Settings -- Secrets and variables -- Actions -- Secrets). You need an email with SMTP host, port, account and app password. Check out [User config](#(User-config)) for the full config we need.
 ![](docs/add_secrets.png)
 3. Enable Workflow r/w permissions
 Settings -- Actions -- General
@@ -39,7 +39,7 @@ Then the action will be triggered when pushing to repo or reaching a certain tim
 ```
 wget https://github.com/Freddd13/auto-Halcyon/blob/main/localconfig.yaml?raw=true -O .localconfig.yaml
 ```
-2. Replace your own data in the yaml above. Check out [User config](#(User%20config)) for the full config we need.
+2. Replace your own data in the yaml above. Check out [User config](#(User-config)) for the full config we need.
 3. Enable Workflow r/w permissions
 3. Download image and run:
 ```
@@ -50,7 +50,7 @@ docker run -d --name auto-halcyon -v $(pwd)/.localconfig.yaml:/app/.localconfig.
 ## Develop
 ### Run locally
 1. Clone this repo
-2. Create a .localconfig.yaml from localconfig.yaml and fill in your data. Check out [User config](#(User%20config)) for the full config we need.
+2. Create a .localconfig.yaml from localconfig.yaml and fill in your data. Check out [User config](#(User-config)) for the full config we need.
 3. Enable Workflow r/w permissions
 3. `pip install -r requirements.txt`
 4. Set env `AUTO_HALCYON_ENV` to `LOCAL`
