@@ -8,22 +8,7 @@ Finally we send files via email or upload to onedrive(TODO).
 The sensitive data is saved in Github repo's secrets thus it's safe.
 
 ## Usage
-### User config
-| Variable                  | Description                                         | Example Value          |
-|---------------------------|-----------------------------------------------------|------------------------|
-| `MMS_email`               | Email associated with MMS website.                | `user@example.com`     |
-| `MMS_password`            | Password for the MMS.                        | `passwordiiyokoiyo`          |
-| `MMS_savefolder_path`     | Path to the save folder for MMS.                   | `files` (recommended)      |
-| `RSS_url`                 | URL of the RSS feed.                               | `https://rsshub.app/youtube/user/@HalcyonMusic`|
-| `RSS_max_days_difference` | Maximum allowable day difference for RSS entries.  | `14`  (recommended)                    |
-| `RSS_max_trial_num`       | Maximum number of video posts attempt to download.     | `10` (recommended)                    |
-| `enable_email_notify`      | Whether to notify downloading result via email  (1 enable, 0 disable)  | `1` |
-| `Email_sender`            | Email address used to send emails.                 | `sender@example.com`   |
-| `Email_receivers`         | Email addresses designated to receive emails.      | `receiver@example.com` |
-| `Email_smtp_host`         | SMTP server address used to send emails.           | `smtp.example.com`     |
-| `Email_smtp_port`         | SMTP server port used to send emails.              | `11451`                  |
-| `Email_mail_license`      | SMTP password or authorization used for sending emails.  | `1145141919810`  |
-<br>
+
 ### Use Github Action
 1. Fork the repo
 2. Use your own information to set the needed secrets in your repo(Repo Settings -- Secrets and variables -- Actions -- Secrets). You need an email with SMTP host, port, account and app password. Check out [User config](#(User-config)) for the full config we need.
@@ -46,6 +31,22 @@ wget https://github.com/Freddd13/auto-Halcyon/blob/main/localconfig.yaml?raw=tru
 docker pull fredyu13/auto-halcyon
 docker run -d --name auto-halcyon -v $(pwd)/.localconfig.yaml:/app/.localconfig.yaml fredyu13/auto-halcyon
 ```
+
+### User config
+| Variable                  | Description                                         | Example Value          |
+|---------------------------|-----------------------------------------------------|------------------------|
+| `MMS_email`               | Email associated with MMS website.                | `user@example.com`     |
+| `MMS_password`            | Password for the MMS.                        | `passwordiiyokoiyo`          |
+| `MMS_savefolder_path`     | Path to the save folder for MMS.                   | `files` (recommended)      |
+| `RSS_url`                 | URL of the RSS feed.                               | `https://rsshub.app/youtube/user/@HalcyonMusic`|
+| `RSS_max_days_difference` | Maximum allowable day difference for RSS entries.  | `14`  (recommended)                    |
+| `RSS_max_trial_num`       | Maximum number of video posts attempt to download.     | `10` (recommended)                    |
+| `enable_email_notify`      | Whether to notify downloading result via email  (1 enable, 0 disable)  | `1` |
+| `Email_sender`            | Email address used to send emails.                 | `sender@example.com`   |
+| `Email_receivers`         | Email addresses designated to receive emails.      | `receiver@example.com` |
+| `Email_smtp_host`         | SMTP server address used to send emails.           | `smtp.example.com`     |
+| `Email_smtp_port`         | SMTP server port used to send emails.              | `11451`                  |
+| `Email_mail_license`      | SMTP password or authorization used for sending emails.  | `1145141919810`  |
 
 ## Develop
 ### Run locally
