@@ -48,6 +48,7 @@ docker run -d --name auto-halcyon -v $(pwd)/.localconfig.yaml:/app/.localconfig.
 | `Email_smtp_port`         | SMTP server port used to send emails.              | `11451`                  |
 | `Email_mail_license`      | SMTP password or authorization used for sending emails.  | `1145141919810`  |
 
+
 ## Develop
 ### Run locally
 1. Clone this repo
