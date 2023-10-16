@@ -7,6 +7,10 @@ Use RSS to get channel's latest video data, parse its sheet links and auto downl
 Finally we send files via email or upload to onedrive(TODO).
 The sensitive data is saved in Github repo's secrets thus it's safe.
 
+Q: So why to choose a more complicated way via youtube instead of fetching directly on the sheet website?
+A: The repo will be refactored soon. Now I think it's ok to directly fetch via graphql WITHOUT RSS for that the sheet id seems to be increased by time. Once I use youtube rss because there's a timestamp in it and can be easily updated to the github repo.
+Besides, I have made a pr to rsshub which directly returning freesheets data of any mymusicsheet user, which can simplify the code, lol.
+
 ## Usage
 
 ### Use Github Action
@@ -69,6 +73,7 @@ The schedule task can be adjusted by modifing the ./docker/crontab.
 ### About RSS
 Currently the repo depends on [Youtube user route rss from RSSHub](https://docs.rsshub.app/routes/social-media#youtube-user). The url should be something like `https://rsshub.app/youtube/user/@HalcyonMusic`. The domain is strongly recommended to replaced with yours, because the public hub can be banned by source sites sometimes. And self-hosting one is quite benefit for your other future usage.
 For more info, please check [RSSHub doc](https://docs.rsshub.app/).
+
 
 ### About Email
 The `enable_email_notify` is used to send you downloading result including sheets and app log. If you disable the email, there's still another way to save your sheets: remove the `MMS_savefolder_path` directory if it exists in the `.gitignore`. The action will update the downloaded sheets to your repo. But it's not a good behavior to share others' sheets without permission, thus it's not recommended to disable email before other uploading method is supported.
