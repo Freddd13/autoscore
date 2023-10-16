@@ -7,9 +7,12 @@ Use RSS to get channel's latest video data, parse its sheet links and auto downl
 Finally we send files via email or upload to onedrive(TODO).
 The sensitive data is saved in Github repo's secrets thus it's safe.
 
-Q: So why to choose a more complicated way via youtube instead of fetching directly on the sheet website?
+**COMING SOON:**
+- Q: So why to choose a more complicated way via youtube instead of fetching directly on the sheet website?
+
 A: The repo will be refactored soon. Now I think it's ok to directly fetch via graphql WITHOUT RSS for that the sheet id seems to be increased by time. Once I use youtube rss because there's a timestamp in it and can be easily updated to the github repo.
 Besides, I have made a pr to rsshub which directly returning freesheets data of any mymusicsheet user, which can simplify the code, lol.
+- support any user
 
 ## Usage
 
@@ -57,7 +60,6 @@ docker run -d --name auto-halcyon -v $(pwd)/.localconfig.yaml:/app/.localconfig.
 ### Run locally
 1. Clone this repo
 2. Create a .localconfig.yaml from localconfig.yaml and fill in your data. Check out [User config](#(User-config)) for the full config we need.
-3. Enable Workflow r/w permissions
 3. `pip install -r requirements.txt`
 4. Set env `AUTO_HALCYON_ENV` to `LOCAL`
 4. `python main.py`
