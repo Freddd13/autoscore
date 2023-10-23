@@ -33,6 +33,7 @@ jobs:
         MMS_savefolder_path: ${{ secrets.MMS_savefolder_path }}
 
         RSS_url: ${{ secrets.RSS_url }}
+        RSS_url: ${{ secrets.RSS_key }}
         RSS_max_days_difference: ${{ secrets.RSS_max_days_difference }}
         RSS_max_trial_num: ${{ secrets.RSS_max_trial_num }}
         
