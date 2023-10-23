@@ -1,7 +1,7 @@
 '''
 Date: 2023-10-23 18:04:14
 LastEditors: Kumo
-LastEditTime: 2023-10-23 23:36:25
+LastEditTime: 2023-10-24 00:33:19
 Description: 
 '''
 from auto_score.utils.proxy_decorator import MY_PROXY
@@ -77,7 +77,6 @@ class MMS:
             # logger.info("auth_token: " + self.auth_token)
             return True
         else:
-            print(response.text)
             logger.info("登录失败")
             return False
 
@@ -107,7 +106,6 @@ class MMS:
                 #		url = "https://payport.pd.mapia.io/v2/currency"
                 url_pdf = f"https://mms.pd.mapia.io/mms/public/file/{mfsKey}/download"
                 self._sheet_links.append(url_pdf)
-                print(url_pdf)
 
                 response_pdf = requests.get(url_pdf, headers=self.headers_download, proxies=MY_PROXY)
 

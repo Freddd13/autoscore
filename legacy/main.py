@@ -111,7 +111,6 @@ class MMS:
         if response.status_code != 200:
             logger.error("fail to get sheet data")
 
-        #print(response.text)
         response.encoding = 'utf-8'
         data = response.json()
         # logger.debug(data.keys())

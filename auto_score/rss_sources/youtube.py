@@ -1,7 +1,7 @@
 '''
 Date: 2023-10-23 21:27:08
 LastEditors: Kumo
-LastEditTime: 2023-10-23 21:28:27
+LastEditTime: 2023-10-24 00:33:25
 Description: 
 '''
 from ..utils.singleton import SingletonMeta, InstanceRegistry
@@ -65,9 +65,6 @@ class YoutubeRSSHandler:
                 else:
                     current_tried_num += 1
 
-                # print("Entry Title:", entry.title)
-                # print("Entry Link:", entry.link)
-                # print("Entry Summary:", entry.summary)
                 sheet_url_matched = False
                 logger.info("-" * 50)
 
@@ -92,7 +89,6 @@ class YoutubeRSSHandler:
                         
                     if not sheet_url_matched:
                         logger.warning(str(entry.link) + " not matched")
-                        # print(entry.summary)
         else:
             logger.error(f"Failed to retrieve RSS data. Status code: {response.status_code}")
 
