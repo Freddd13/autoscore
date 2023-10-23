@@ -1,7 +1,7 @@
 '''
 Date: 2023-10-23 18:24:44
 LastEditors: Kumo
-LastEditTime: 2023-10-23 23:49:31
+LastEditTime: 2023-10-24 00:23:48
 Description: 
 '''
 from .utils.logger import LoggerManager
@@ -35,7 +35,6 @@ class GithubActionStrategy(BaseStrategy):
         logger.info("Using Github Action Strategy")
         super().__init__()
         self.load_config()
-        self.get_last_success_time()
 
     def load_config(self):
         self.email = os.environ.get('MMS_email')
