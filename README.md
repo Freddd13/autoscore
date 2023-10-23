@@ -1,18 +1,11 @@
-# Auto Halcyon
-[HalyconMusic(ハルシオン Anime Piano Covers)](https://www.youtube.com/@HalcyonMusic) is an exceptionally talented piano content creator. Not only does he produce high-quality videos, but he also generously shares his sheet music for free for a limited time after his videos' release. To prevent missing out on the free sheet music due to a busy personal life, I created this repo. However, whenever I have time, I make sure to support the channel by liking, giving coins(bilibili), favoriting and leaving a comment. So even if using the flow, let's not just be passive viewers.
+# AutoScore
+Automatically get FREE sheets of specific user on mymusicsheet and more.
+
+## Motivation
+[HalyconMusic(ハルシオン Anime Piano Covers)](https://www.youtube.com/@HalcyonMusic) is an exceptionally talented piano content creator. Not only does he produce high-quality videos, but he also generously shares his sheet music for free for a limited time after his videos' release. To prevent missing out on the free sheet music due to a busy personal life, I created this repo to get freesheets of but not limited to him. However, whenever I have time, I make sure to support the channel by liking, giving coins(bilibili), favoriting and leaving a comment. So even if using the flow, let's not just be passive viewers.
 
 ## Method
-Periodically check his new video and run. Specifically:
-Use RSS to get channel's latest video data, parse its sheet links and auto download them. 
-Finally we send files via email or upload to onedrive(TODO).
-The sensitive data is saved in Github repo's secrets thus it's safe.
-
-**COMING SOON:**
-- Q: So why to choose a more complicated way via youtube instead of fetching directly on the sheet website?
-
-A: The repo will be refactored soon. Now I think it's ok to directly fetch via graphql WITHOUT RSS for that the sheet id seems to be increased by time. Once I use youtube rss because there's a timestamp in it and can be easily updated to the github repo.
-Besides, I have made a pr to rsshub which directly returning freesheets data of any mymusicsheet user, which can simplify the code, lol.
-- support any user
+Use RSS to get user's free sheets and auto download them. Finally we send files via email or upload to onedrive(TODO). The sensitive data is saved in Github repo's secrets thus it's safe.
 
 ## Usage
 
@@ -45,7 +38,8 @@ docker run -d --name auto-halcyon -v $(pwd)/.localconfig.yaml:/app/.localconfig.
 | `MMS_email`               | Email associated with MMS website.                | `user@example.com`     |
 | `MMS_password`            | Password for the MMS.                        | `passwordiiyokoiyo`          |
 | `MMS_savefolder_path`     | Path to the save folder for MMS.                   | `files` (recommended)      |
-| `RSS_url`                 | URL of the RSS feed.                               | `https://rsshub.app/youtube/user/@HalcyonMusic`|
+| `RSS_url`                 | URL of the RSS feed.                               | `https://rsshub.app`|
+| `RSS_key`                 | key of your self-hosted rsshub. url->url/SOMEROUTE?key={key} If you don't know what is it, just leave it empty.                               | `123`|
 | `RSS_max_days_difference` | Maximum allowable day difference for RSS entries.  | `14`  (recommended)                    |
 | `RSS_max_trial_num`       | Maximum number of video posts attempt to download.     | `10` (recommended)                    |
 | `enable_email_notify`      | Whether to notify downloading result via email  (1 enable, 0 disable)  | `1` |
@@ -71,9 +65,10 @@ docker run -d --name auto-halcyon -v $(pwd)/.localconfig.yaml:/app/.localconfig.
 4. `docker run -d --name auto_halcyon auto-halcyon:latest`
 The schedule task can be adjusted by modifing the ./docker/crontab.
 
+
 ## Note
 ### About RSS
-Currently the repo depends on [Youtube user route rss from RSSHub](https://docs.rsshub.app/routes/social-media#youtube-user). The url should be something like `https://rsshub.app/youtube/user/@HalcyonMusic`. The domain is strongly recommended to replaced with yours, because the public hub can be banned by source sites sometimes. And self-hosting one is quite benefit for your other future usage.
+Currently the repo depends on [MMS user route rss from RSSHub](https://docs.rsshub.app/routes/social-media#youtube-user). It's recommended to replace the domain with your self-hosted rsshub url, because the public hub can sometimes be banned by source sites. Besides, self-hosting one is quite benefit for your other future usage.
 For more info, please check [RSSHub doc](https://docs.rsshub.app/).
 
 
@@ -85,6 +80,7 @@ The `enable_email_notify` is used to send you downloading result including sheet
 - [x] Email notification
 - [x] Ignore History downloaded sheets
 - [x] Docker support
+- [ ] Gumroad support
 - [ ] Save to Onedrive/Cloudreve
 
 
