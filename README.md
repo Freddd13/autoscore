@@ -78,6 +78,8 @@ For more info, please check [RSSHub doc](https://docs.rsshub.app/).
 
 
 ### About Onedrive
+To save to onedrive, you need to create an app in [Azure](https://portal.azure.com/#home). Note that currently only onedrive business international is tested.
+Check out [here](auto_score/onedrive/README.md) for detailed instructions of getting required data.
 The onedrive needs a login for the first time, after that the token will be saved to `_refresh_token`. As I have no idea how to receive auth callback in github action, the code assumes there's already a token file with token. Thus you need to run on local first to generate the token file. 
 For github action:
 1. Fork this repo,
