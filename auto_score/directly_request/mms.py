@@ -1,7 +1,7 @@
 '''
 Date: 2023-10-23 18:04:14
 LastEditors: Kumo
-LastEditTime: 2023-10-24 00:33:19
+LastEditTime: 2023-10-24 16:42:25
 Description: 
 '''
 from auto_score.utils.proxy_decorator import MY_PROXY
@@ -27,6 +27,8 @@ class MMS:
         self.email = email
         self.password = password
         self.local_savefolder = local_savefolder
+        if not os.path.exists(self.local_savefolder):
+            os.makedirs(self.local_savefolder)
 
         self.login_url = "https://mms.pd.mapia.io/mms/public/user/signin/email"
         self.headers_login = {
