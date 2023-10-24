@@ -1,7 +1,7 @@
 '''
 Date: 2023-10-23 18:24:31
 LastEditors: Kumo
-LastEditTime: 2023-10-24 00:28:49
+LastEditTime: 2023-10-24 13:54:34
 Description: 
 '''
 from auto_score.cloudreve import Cloudreve
@@ -14,11 +14,14 @@ from auto_score.utils.logger import LoggerManager
 from auto_score.rss_sources.mms import MMSRSSHandler
 from auto_score.directly_request.mms import MMS
 
+from auto_score.onedrive.onedrive import OnedriveManager
+
 import hashlib
 import os
 
 log_manager = LoggerManager(f"log/{__name__}.log")
 logger = log_manager.logger
+ERROR_MSGS = []
 
 
 def parse_last_download(lines):
@@ -28,6 +31,10 @@ def parse_last_download(lines):
         last_download[md5] = float(timestamp)
     return last_download
 
+def collect_errors(err):
+    logger.error(err)
+    ERROR_MSGS.append(err)
+ 
 
 if __name__ == "__main__":
     ## 0. get config
@@ -43,8 +50,9 @@ if __name__ == "__main__":
     elif env == "GITHUB_ACTION":
         strategy = GithubActionStrategy()
     else:
-        logger.error(f"env error, not support env: {env}")
+        collect_errors(f"env error, not support env: {env}")
         os._exit(-1)
+
 
     ## 1. Init
     ### handlers
@@ -106,7 +114,8 @@ if __name__ == "__main__":
                         logger.info(f"Successfully download {len(links)} links into {strategy.savefolder_path}.")
                     else:   # failed when downloading
                         all_tasks_success = False
-                        logger.error(f"Failed when downloading {user}'s sheets in RSS source {source_name}.")
+                        collect_errors(f"Failed when downloading {user}'s sheets in RSS source {source_name}.")
+
                 # else:       # failed when create folder
                 #     all_tasks_success = False
                 #     logger.error(f"Failed when create_directory {save_folder} in cloudreve.")
@@ -115,43 +124,70 @@ if __name__ == "__main__":
 
         else:   # failed when getting parser
             all_tasks_success = False
-            logger.error(f"RSS source {source_name} is not available.")
+            collect_errors(f"RSS source {source_name} is not available.")
 
 
-
-    ### collect all sheets
+    ### 4. collect all sheets
     all_sheets_dir = []
     for handler in GetHandlers():
         all_sheets_dir.extend([path for path in handler.file_paths])
 
-    ## 4. check result and prepare mail data
-    logger.info("=" * 50)
-    logger.info("summary: ")
-    if all_tasks_success:
-        if num_newly_downloads > 0:
-            subject = "Successfully downloading sheets."
-            content = "Success downloading the following sheet(s):\n{}".format('\n'.join(str(titles_newly_download)))
-            logger.info("All sheets start to download successfully.")
 
-        else:   # nothing new
-            subject = "There's no new sheet updated."
-            content = "There's no new sheet!"
-            logger.info("There's no new sheet")
-
-    else:   # download error
-        subject = "Failed to download all sheets."
-        content = "Failed..."
-        logger.error("Failed to download all sheets.")
-    logger.info("=" * 50)
+    ## 5. upload to onedrive
+    if strategy.enable_od_upload:
+        om = OnedriveManager(strategy.od_client_id, strategy.od_client_secret, strategy.od_redirect_uri)
+        all_od_upload_success = True
+        for path in all_sheets_dir:
+            if om.try_refresh_token():
+                # get filename from path with extension
+                upload_target = os.path.join(strategy.od_upload_dir, os.path.basename(path)).replace('\\','/')
+                logger.debug(upload_target)
+                if om.upload_large_file(path, upload_target):
+                    logger.info('Upload to onedrive successfully')
+                else:
+                    all_od_upload_success = False
+                    collect_errors('Failed to upload to onedrive')
+            else:
+                collect_errors('cannot refresh onedrive token')
 
 
-    ## 5. send email
+    ## 6. send email
     if strategy.enable_email_notify:
+        ### check result and prepare mail data
+        logger.info("=" * 50)
+        logger.info("summary: ")
+        has_error_prefix = "[ERROR] " if len(ERROR_MSGS) > 0 else ""
+        if all_tasks_success:
+            if num_newly_downloads > 0:
+                subject = f"{has_error_prefix}Successfully downloading sheets."
+                content = "Success downloading the following sheet(s):\n{}".format('\n'.join([title for title in titles_newly_download]))
+                logger.info("All sheets start to download successfully.")
+
+            else:   # nothing new
+                subject = f"{has_error_prefix}There's no new sheet updated."
+                content = "There's no new sheet!"
+                logger.info("There's no new sheet")
+
+        else:   # download error
+            subject = f"{has_error_prefix}Failed to download all sheets."
+            content = "Failed..."
+            collect_errors("Failed to download all sheets.")
+
+        if has_error_prefix:
+            content += "ERROR msgs: \n{}".format('\n'.join([err for err in ERROR_MSGS]))        
+        logger.info("=" * 50)   
+
         email_handler = EmailHandler(strategy.sender, strategy.smtp_host, strategy.smtp_port, strategy.mail_license, strategy.receivers)
         # all_sheets_dir.extend(LoggerManager.get_all_log_filenames())
-        email_handler.perform_sending(subject, content, sheet_files=all_sheets_dir, log_files=LoggerManager.get_all_log_filenames())
+        email_handler.perform_sending(
+            subject, 
+            content, 
+            sheet_files=all_sheets_dir, 
+            log_files=LoggerManager.get_all_log_filenames() if strategy.send_logs else []
+        )
 
-    ## 6. update download data
+
+    ## 7. update download data
     with open(last_download_filename, 'w') as file:
         for md5, timestamp in latest_downloads.items():
             if timestamp:

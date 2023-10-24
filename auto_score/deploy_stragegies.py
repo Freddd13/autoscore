@@ -1,7 +1,7 @@
 '''
 Date: 2023-10-23 18:24:44
 LastEditors: Kumo
-LastEditTime: 2023-10-24 00:31:17
+LastEditTime: 2023-10-24 14:14:55
 Description: 
 '''
 from .utils.logger import LoggerManager
@@ -43,8 +43,6 @@ class GithubActionStrategy(BaseStrategy):
 
         self.rss_url = os.environ.get('RSS_url')
         self.rss_url_key = os.environ.get('RSS_url_key')
-        self.max_days_difference = os.environ.get('RSS_max_days_difference')
-        self.max_trial_num = os.environ.get('RSS_max_trial_num')
 
         self.enable_email_notify = bool(os.environ.get('enable_email_notify'))
         self.sender = os.environ.get('Email_sender')
@@ -52,6 +50,14 @@ class GithubActionStrategy(BaseStrategy):
         self.smtp_host = os.environ.get('Email_smtp_host')
         self.smtp_port = os.environ.get('Email_smtp_port')
         self.mail_license = os.environ.get('Email_mail_license') 
+        self.send_logs = os.environ.get('Email_send_logs') 
+
+        # onedrive
+        self.enable_od_upload = bool(os.environ.get('enable_od_upload'))
+        self.od_client_id = os.environ.get('od_client_id')
+        self.od_client_secret = os.environ.get('od_client_secret')
+        self.od_redirect_uri = os.environ.get('od_redirect_uri')
+        self.od_upload_dir =  os.environ.get('od_upload_dir')
 
         # private
         # self._github_repo_token = os.environ.get('GITHUB_REPO_TOKEN')
@@ -75,8 +81,6 @@ class DockerStrategy(BaseStrategy):
 
         self.rss_url = yaml_data['RSS']['url']
         self.rss_url_key = yaml_data['RSS']['key']
-        self.max_days_difference = yaml_data['RSS']['max_days_difference']
-        self.max_trial_num = yaml_data['RSS']['max_trial_num']
 
         self.enable_email_notify = bool(yaml_data['Email']['enable_email_notify'])
         self.sender = yaml_data['Email']['sender']
@@ -84,6 +88,13 @@ class DockerStrategy(BaseStrategy):
         self.smtp_host = yaml_data['Email']['smtp_host']
         self.smtp_port = yaml_data['Email']['smtp_port']
         self.mail_license = yaml_data['Email']['mail_license']
+        self.send_logs = yaml_data['Email']['send_logs']
+
+        self.enable_od_upload = bool(yaml_data['onedrive']['enable_od_upload'])
+        self.od_client_id =  yaml_data['onedrive']['od_client_id']
+        self.od_client_secret =  yaml_data['onedrive']['od_client_secret']
+        self.od_redirect_uri =  yaml_data['onedrive']['od_redirect_uri']
+        self.od_upload_dir =  yaml_data['onedrive']['od_upload_dir']        
 
 
 @log_manager.apply_log_method_to_all_methods
@@ -103,8 +114,6 @@ class LocalStrategy(BaseStrategy):
 
         self.rss_url = yaml_data['RSS']['url']
         self.rss_url_key = yaml_data['RSS']['key']
-        self.max_days_difference = yaml_data['RSS']['max_days_difference']
-        self.max_trial_num = yaml_data['RSS']['max_trial_num']
 
         self.enable_email_notify = bool(yaml_data['Email']['enable_email_notify'])
         self.sender = yaml_data['Email']['sender']
@@ -112,4 +121,11 @@ class LocalStrategy(BaseStrategy):
         self.smtp_host = yaml_data['Email']['smtp_host']
         self.smtp_port = yaml_data['Email']['smtp_port']
         self.mail_license = yaml_data['Email']['mail_license']
+        self.send_logs = yaml_data['Email']['send_logs']
+
+        self.enable_od_upload = bool(yaml_data['onedrive']['enable_od_upload'])
+        self.od_client_id =  yaml_data['onedrive']['od_client_id']
+        self.od_client_secret =  yaml_data['onedrive']['od_client_secret']
+        self.od_redirect_uri =  yaml_data['onedrive']['od_redirect_uri']        
+        self.od_upload_dir =  yaml_data['onedrive']['od_upload_dir']        
        

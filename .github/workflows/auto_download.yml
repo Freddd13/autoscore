@@ -43,6 +43,13 @@ jobs:
         Email_smtp_host: ${{ secrets.Email_smtp_host }}
         Email_smtp_port: ${{ secrets.Email_smtp_port }}
         Email_mail_license: ${{ secrets.Email_mail_license }}
+        Email_send_logs: ${{ secrets.Email_send_logs }}
+
+        enable_od_upload:  ${{ secrets.enable_od_upload }}
+        od_client_id:  ${{ secrets.od_client_id }}
+        od_client_secret:  ${{ secrets.od_client_secret }}
+        od_redirect_uri:  ${{ secrets.od_redirect_uri }}
+        od_upload_dir:  ${{ secrets.od_upload_dir }}
 
         # GITHUB_REPO_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
         # REPO_NAME: ${{ github.event.repository.name }}  # https://stackoverflow.com/questions/62803531/repository-name-as-a-github-action-environment-variable

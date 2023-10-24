@@ -4,3 +4,4 @@ pytz
 msal
 tqdm
 pyyaml
+microsoftgraph-python
