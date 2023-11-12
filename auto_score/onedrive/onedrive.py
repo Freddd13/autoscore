@@ -34,6 +34,7 @@ class OnedriveManager:
             try:
                 self._token =  self.client.refresh_token(self._redirect_uri, refresh_token).data
             except microsoftgraph.exceptions.BaseError as e:
+                logger.error(str(e))
                 return False
 
         else:
