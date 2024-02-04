@@ -9,6 +9,9 @@ Use RSS to get user's free sheets and auto download them. Finally we send files 
 Note: If you want to enable uploading to onedrive: see [About Onedrive](#About-Onedrive).
 
 ## Usage
+Though this repo origins from a need to download Halycon's sheets, We plan to support any composer's free sheet on mymusichseet and more.
+But Note that it's still under developing, you may fail to get their sheets when trying to subscribe other users due to some problem on the upstream RSS.
+To subscribe another composer or more composers, please modify the `subscriptions` file in the repo, the format is `mms|USERNAME`. We subscribe HalcyonMusic's free sheets by default.
 
 ### Use Github Action
 1. Fork the repo
