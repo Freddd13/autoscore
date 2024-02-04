@@ -10,7 +10,7 @@ Note: If you want to enable uploading to onedrive: see [About Onedrive](#About-O
 
 ## Usage
 Though this repo origins from a need to download Halycon's sheets, We plan to support any composer's free sheet on mymusichseet and more.
-But please note that this repo is still under developing, you may fail to get their sheets when trying to subscribe other users due to some problem on the upstream RSS.
+But please note that this repo is still under developing, you may fail to get their sheets when trying to subscribe other users due to some problem on the upstream RSS (Related RSS on RSSHub: [Mymusichseet-Usersheets](https://docs.rsshub.app/routes/shopping#mymusicsheet-user-sheets).
 To subscribe another composer or more composers, please modify the `subscriptions` file in the repo, the format is `mms|USERNAME`(Each composer occupies a line). We subscribe HalcyonMusic's free sheets by default. Open an issue if you face problems, and pr is welcomed. (Though I think few guys can find here without advertising...)
 
 ### Use Github Action
