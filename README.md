@@ -45,6 +45,7 @@ docker run -d --name auto-halcyon -v $(pwd)/.localconfig.yaml:/app/.localconfig.
 
 ### User config
 > This is for Github Action Secrets, but it's similar for yamls when using docker or running locally
+
 | Variable                  | Description                                         | Example Value          |
 |---------------------------|-----------------------------------------------------|------------------------|
 | `MMS_email`               | Email associated with MMS website.                | `user@example.com`     |
