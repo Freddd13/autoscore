@@ -17,7 +17,11 @@ Note: If you want to enable uploading to onedrive: see [About Onedrive](#About-O
 3. Enable Workflow r/w permissions
 Settings -- Actions -- General
 ![](docs/enable_rw.png)
-
+4. Allow the actions to run on your forked repos:
+a. Actions-->click "I understand my workflows, go ahead and enable them"
+![](docs/allow_action.png)
+b. Enable the auto download workflow: auto download-->Enable workflow
+![](docs/enable_schedule.png)
 Then the action will be triggered when pushing to repo or reaching a certain time everyday. The latter can be set in the auto_download.yml. 
 
 ### Use Docker
