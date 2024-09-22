@@ -28,7 +28,7 @@ wget https://github.com/Freddd13/auto-Halcyon/blob/main/localconfig.yaml?raw=tru
 2. Replace your own data in the yaml above. Check out [User config](#User-config) for the full config we need.
 3. Enable Workflow r/w permissions
 3. Download image and run:
-```
+
 docker pull fredyu13/autoscore
 docker run -d --name autoscore -v $(pwd)/.localconfig.yaml:/app/.localconfig.yaml fredyu13/autoscore
 
