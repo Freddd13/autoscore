@@ -1,7 +1,7 @@
 '''
 Date: 2023-10-23 18:04:14
 LastEditors: Kumo
-LastEditTime: 2024-09-22 21:08:34
+LastEditTime: 2024-09-22 21:28:09
 Description: 
 '''
 from auto_score.utils.proxy_decorator import AUTHOR_PROXY
@@ -177,8 +177,8 @@ class MMS(BaseRequest):
         items = []
         for item in sheet_search:
             price = float(item.get('price', -1))
-            # if abs(price) < 1e-6: # free sheet
-            if 1: # free sheet
+            if abs(price) < 1e-6: # free sheet
+            # if 1: # free sheet
                 title = f"{item['author']['name']} | {item['title']}"
                 link = f"{self.BASE_URL}/{username}/{item['sheetId']}"
                 this_sheetnum = int(link.split("/")[-1])
