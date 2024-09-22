@@ -33,23 +33,24 @@ docker pull fredyu13/autoscore
 docker run -d --name autoscore -v $(pwd)/.localconfig.yaml:/app/.localconfig.yaml fredyu13/autoscore
 
 ### User config(For Github Action Secrets, but it's similar for yaml)
-| Variable                  | Description                                         | Example Value          |
-|---------------------------|-----------------------------------------------------|------------------------|
-| `MMS_email`               | Email associated with MMS website.                | `user@example.com`     |
-| `MMS_password`            | Password for the MMS.                        | `passwordiiyokoiyo`          |
-| `MMS_savefolder_path`     | Path to the save folder for MMS.                   | `files` (recommended)      |
-| `enable_email_notify`      | Whether to notify downloading result via email  (1 enable, 0 disable)  | `1` |
-| `Email_sender`            | Email address used to send emails.                 | `sender@example.com`   |
-| `Email_receivers`         | Email addresses designated to receive emails.      | `receiver@example.com` |
-| `Email_smtp_host`         | SMTP server address used to send emails.           | `smtp.example.com`     |
-| `Email_smtp_port`         | SMTP server port used to send emails.              | `11451`                  |
-| `Email_mail_license`      | SMTP password or authorization used for sending emails.  | `1145141919810`  |
-| `Email_send_logs`      | Whether to send email with logs (1 enable, 0 disable)  | `1`  |
-| `enable_od_upload`      | Whether to also upload sheets to onedrive (1 enable, 0 disable)  | `0`  |
-| `od_client_id`      | onedrive app client id  | `114514`  |
-| `od_client_secret`      | onedrive app client secret value | `114514`  |
-| `od_redirect_uri`      | onedrive app redirect_ur  | `http://localhost:9001`  |
-| `od_upload_dir`      | which onedrive dir to upload sheets to relative to the root, do NOT start with '/'  | `halycon_sheets`  |
+
+| Variable                | Description                                                 | Example Value           |
+|-------------------------|-------------------------------------------------------------|-------------------------|
+| `MMS_email`             | Email associated with MMS website.                          | `user@example.com`      |
+| `MMS_password`          | Password for the MMS.                                       | `passwordiiyokoiyo`     |
+| `MMS_savefolder_path`   | Path to the save folder for MMS.                            | `files` (recommended)   |
+| `enable_email_notify`   | Whether to notify downloading result via email (1 enable, 0 disable) | `1`                    |
+| `Email_sender`          | Email address used to send emails.                          | `sender@example.com`    |
+| `Email_receivers`       | Email addresses designated to receive emails.               | `receiver@example.com`  |
+| `Email_smtp_host`       | SMTP server address used to send emails.                    | `smtp.example.com`      |
+| `Email_smtp_port`       | SMTP server port used to send emails.                       | `11451`                 |
+| `Email_mail_license`    | SMTP password or authorization used for sending emails.     | `1145141919810`         |
+| `Email_send_logs`       | Whether to send email with logs (1 enable, 0 disable)       | `1`                     |
+| `enable_od_upload`      | Whether to also upload sheets to OneDrive (1 enable, 0 disable) | `0`                    |
+| `od_client_id`          | OneDrive app client ID                                      | `114514`                |
+| `od_client_secret`      | OneDrive app client secret value                            | `114514`                |
+| `od_redirect_uri`       | OneDrive app redirect URI                                   | `http://localhost:9001` |
+| `od_upload_dir`         | Directory on OneDrive to upload sheets (relative to root, do NOT start with '/') | `halycon_sheets` |
 
 
 ## Develop
