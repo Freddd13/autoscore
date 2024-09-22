@@ -1,7 +1,7 @@
 '''
 Date: 2023-10-23 18:04:14
 LastEditors: Kumo
-LastEditTime: 2024-09-22 19:12:42
+LastEditTime: 2024-09-22 21:05:26
 Description: 
 '''
 from auto_score.utils.proxy_decorator import AUTHOR_PROXY

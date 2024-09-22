@@ -1,7 +1,7 @@
 '''
 Date: 2023-10-23 18:24:31
 LastEditors: Kumo
-LastEditTime: 2024-09-22 19:04:35
+LastEditTime: 2024-09-22 20:51:46
 Description: 
 '''
 from auto_score.email import EmailHandler
@@ -178,7 +178,7 @@ if __name__ == "__main__":
 
     ## 7. update download data
     with open(last_download_filename, 'w') as file:
-        for md5, timestamp in latest_downloads.items():
-            if timestamp:
-                file.write(f'{md5} {timestamp}\n')
+        for md5, max_sheetnum in latest_downloads.items():
+            if max_sheetnum:
+                file.write(f'{md5} {max_sheetnum}\n')
         logger.info("Update last download signal successfully.")

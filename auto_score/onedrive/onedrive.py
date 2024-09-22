@@ -1,7 +1,7 @@
 '''
 Date: 2023-10-24 11:00:30
 LastEditors: Kumo
-LastEditTime: 2023-10-24 13:14:07
+LastEditTime: 2024-09-22 20:57:39
 Description: 
 '''
 import microsoftgraph.client
@@ -92,6 +92,7 @@ class OnedriveManager:
             "Content-Type": "application/json"
         }
         upload_session  = requests.post(url, headers=_headers).json()
+        print(upload_session)
 
         with open(filepath, 'rb') as f:
             data = f.read()
