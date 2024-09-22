@@ -1,17 +1,15 @@
 '''
 Date: 2023-10-23 18:24:31
 LastEditors: Kumo
-LastEditTime: 2023-10-24 13:54:34
+LastEditTime: 2024-09-22 19:04:35
 Description: 
 '''
-from auto_score.cloudreve import Cloudreve
 from auto_score.email import EmailHandler
 from auto_score.deploy_stragegies import *
 from auto_score.utils.proxy_decorator import IS_AUTHOR_ENV
 
 from auto_score.utils.singleton import get_instance, get_handler, GetHandlers
 from auto_score.utils.logger import LoggerManager
-from auto_score.rss_sources.mms import MMSRSSHandler
 from auto_score.directly_request.mms import MMS
 
 from auto_score.onedrive.onedrive import OnedriveManager
@@ -55,18 +53,12 @@ if __name__ == "__main__":
 
 
     ## 1. Init
-    ### handlers
+    ### website handlers
     mms_handler = MMS(strategy.email, strategy.password, strategy.savefolder_path)
-
-    ### instances
-    # cloudreve = Cloudreve(strategy.email, strategy.password, strategy.url)
-    email_handler = EmailHandler(strategy.email, strategy.smtp_host, strategy.smtp_port, strategy.mail_license, strategy.receivers)
-    mms_rss = MMSRSSHandler(strategy.rss_url, strategy.rss_url_key)
 
     ### messy params
     sub_filename = "./subscriptions"    # source | user
     last_download_filename = "./_last_download_signal"
-    # cloudreve_download_dir = strategy.download_dir
 
 
     ## 2. load subscriptions and last downloading times
@@ -94,37 +86,34 @@ if __name__ == "__main__":
 
         full_description = ''.join(parts)
         md5 = hashlib.md5(full_description.encode('utf-8')).hexdigest()
-        last_timestamp = last_downloads.get(md5, -1)
-        latest_downloads[md5] = last_timestamp
+        last_sheetnum = last_downloads.get(md5, -1)
+        latest_downloads[md5] = last_sheetnum
 
         parser = get_instance(source_name)
-        if parser and parser.is_available:
-            # folder_to_root_dir = os.path.join(cloudreve_download_dir, save_folder).replace('\\','/')
-            links, max_timestamp, titles = parser.get_download_data(user, last_timestamp)
-            if len(links) > 0:  # only call downloading when having something new
-                # if cloudreve.create_directory(folder_to_root_dir): # also ok when folder exists
-                    handler = get_handler(source_name)
-                    print(f"{source_name}_handler")
-                    is_download_success = handler.download_sheets(links)
-                    # is_download_success = cloudreve.add_offline_download_task(links, folder_to_root_dir)
-                    if is_download_success:
-                        num_newly_downloads += len(links)
-                        latest_downloads[md5] = max_timestamp
-                        titles_newly_download.extend(titles)
-                        logger.info(f"Successfully download {len(links)} links into {strategy.savefolder_path}.")
-                    else:   # failed when downloading
-                        all_tasks_success = False
-                        collect_errors(f"Failed when downloading {user}'s sheets in RSS source {source_name}.")
 
-                # else:       # failed when create folder
-                #     all_tasks_success = False
-                #     logger.error(f"Failed when create_directory {save_folder} in cloudreve.")
-            else:   # nothing new
-                logger.warning("No new link found")
+        # if parser and parser.is_available:
+        handler = get_handler(source_name)
+        links, max_sheetnum, titles = handler.get_recent_sheets(user, int(last_sheetnum))
+        if len(links) > 0:  # only call downloading when having something new
+            # if cloudreve.create_directory(folder_to_root_dir): # also ok when folder exists
+                print(f"{source_name}_handler")
+                is_download_success = handler.download_sheets(links)
+                # is_download_success = cloudreve.add_offline_download_task(links, folder_to_root_dir)
+                if is_download_success:
+                    num_newly_downloads += len(links)
+                    latest_downloads[md5] = max_sheetnum
+                    titles_newly_download.extend(titles)
+                    logger.info(f"Successfully download {len(links)} links into {strategy.savefolder_path}.")
+                else:   # failed when downloading
+                    all_tasks_success = False
+                    collect_errors(f"Failed when downloading {user}'s sheets in RSS source {source_name}.")
 
-        else:   # failed when getting parser
-            all_tasks_success = False
-            collect_errors(f"RSS source {source_name} is not available.")
+        else:   # nothing new
+            logger.warning("No new link found")
+
+        # else:   # failed when getting parser
+        #     all_tasks_success = False
+        #     collect_errors(f"RSS source {source_name} is not available.")
 
 
     ### 4. collect all sheets
@@ -192,3 +181,4 @@ if __name__ == "__main__":
         for md5, timestamp in latest_downloads.items():
             if timestamp:
                 file.write(f'{md5} {timestamp}\n')
+        logger.info("Update last download signal successfully.")

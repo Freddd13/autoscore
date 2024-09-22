@@ -1,11 +1,12 @@
 '''
 Date: 2023-10-23 18:24:44
 LastEditors: Kumo
-LastEditTime: 2023-10-24 14:14:55
+LastEditTime: 2024-09-22 19:00:40
 Description: 
 '''
 from .utils.logger import LoggerManager
 import os
+import yaml
 
 log_manager = LoggerManager(f"log/{__name__}.log")
 logger = log_manager.logger
@@ -72,29 +73,30 @@ class DockerStrategy(BaseStrategy):
         self.load_config()
 
     def load_config(self):
-        import yaml
         with open('.localconfig.yaml', 'r') as file:
             yaml_data = yaml.load(file, Loader=yaml.FullLoader)
-        self.email = yaml_data['MMS']['email']
-        self.password = yaml_data['MMS']['password']
-        self.savefolder_path = yaml_data['MMS']['savefolder_path']
 
-        self.rss_url = yaml_data['RSS']['url']
-        self.rss_url_key = yaml_data['RSS']['key']
+        # 使用 get 方法来避免 KeyError
+        self.email = yaml_data.get('MMS', {}).get('email', None)
+        self.password = yaml_data.get('MMS', {}).get('password', None)
+        self.savefolder_path = yaml_data.get('MMS', {}).get('savefolder_path', None)
 
-        self.enable_email_notify = bool(yaml_data['Email']['enable_email_notify'])
-        self.sender = yaml_data['Email']['sender']
-        self.receivers = yaml_data['Email']['receivers']
-        self.smtp_host = yaml_data['Email']['smtp_host']
-        self.smtp_port = yaml_data['Email']['smtp_port']
-        self.mail_license = yaml_data['Email']['mail_license']
-        self.send_logs = yaml_data['Email']['send_logs']
+        self.rss_url = yaml_data.get('RSS', {}).get('url', None)
+        self.rss_url_key = yaml_data.get('RSS', {}).get('key', None)
 
-        self.enable_od_upload = bool(yaml_data['onedrive']['enable_od_upload'])
-        self.od_client_id =  yaml_data['onedrive']['od_client_id']
-        self.od_client_secret =  yaml_data['onedrive']['od_client_secret']
-        self.od_redirect_uri =  yaml_data['onedrive']['od_redirect_uri']
-        self.od_upload_dir =  yaml_data['onedrive']['od_upload_dir']        
+        self.enable_email_notify = bool(yaml_data.get('Email', {}).get('enable_email_notify', False))
+        self.sender = yaml_data.get('Email', {}).get('sender', None)
+        self.receivers = yaml_data.get('Email', {}).get('receivers', None)
+        self.smtp_host = yaml_data.get('Email', {}).get('smtp_host', None)
+        self.smtp_port = yaml_data.get('Email', {}).get('smtp_port', None)
+        self.mail_license = yaml_data.get('Email', {}).get('mail_license', None)
+        self.send_logs = yaml_data.get('Email', {}).get('send_logs', False)
+
+        self.enable_od_upload = bool(yaml_data.get('onedrive', {}).get('enable_od_upload', False))
+        self.od_client_id = yaml_data.get('onedrive', {}).get('od_client_id', None)
+        self.od_client_secret = yaml_data.get('onedrive', {}).get('od_client_secret', None)
+        self.od_redirect_uri = yaml_data.get('onedrive', {}).get('od_redirect_uri', None)
+        self.od_upload_dir = yaml_data.get('onedrive', {}).get('od_upload_dir', None)    
 
 
 @log_manager.apply_log_method_to_all_methods
@@ -105,27 +107,29 @@ class LocalStrategy(BaseStrategy):
         self.load_config()
 
     def load_config(self):
-        import yaml
         with open('.localconfig.yaml', 'r') as file:
             yaml_data = yaml.load(file, Loader=yaml.FullLoader)
-        self.email = yaml_data['MMS']['email']
-        self.password = yaml_data['MMS']['password']
-        self.savefolder_path = yaml_data['MMS']['savefolder_path']
 
-        self.rss_url = yaml_data['RSS']['url']
-        self.rss_url_key = yaml_data['RSS']['key']
+        # 使用 get 方法来避免 KeyError
+        self.email = yaml_data.get('MMS', {}).get('email', None)
+        self.password = yaml_data.get('MMS', {}).get('password', None)
+        self.savefolder_path = yaml_data.get('MMS', {}).get('savefolder_path', None)
 
-        self.enable_email_notify = bool(yaml_data['Email']['enable_email_notify'])
-        self.sender = yaml_data['Email']['sender']
-        self.receivers = yaml_data['Email']['receivers']
-        self.smtp_host = yaml_data['Email']['smtp_host']
-        self.smtp_port = yaml_data['Email']['smtp_port']
-        self.mail_license = yaml_data['Email']['mail_license']
-        self.send_logs = yaml_data['Email']['send_logs']
+        self.rss_url = yaml_data.get('RSS', {}).get('url', None)
+        self.rss_url_key = yaml_data.get('RSS', {}).get('key', None)
 
-        self.enable_od_upload = bool(yaml_data['onedrive']['enable_od_upload'])
-        self.od_client_id =  yaml_data['onedrive']['od_client_id']
-        self.od_client_secret =  yaml_data['onedrive']['od_client_secret']
-        self.od_redirect_uri =  yaml_data['onedrive']['od_redirect_uri']        
-        self.od_upload_dir =  yaml_data['onedrive']['od_upload_dir']        
-       
+        self.enable_email_notify = bool(yaml_data.get('Email', {}).get('enable_email_notify', False))
+        self.sender = yaml_data.get('Email', {}).get('sender', None)
+        self.receivers = yaml_data.get('Email', {}).get('receivers', None)
+        self.smtp_host = yaml_data.get('Email', {}).get('smtp_host', None)
+        self.smtp_port = yaml_data.get('Email', {}).get('smtp_port', None)
+        self.mail_license = yaml_data.get('Email', {}).get('mail_license', None)
+        self.send_logs = yaml_data.get('Email', {}).get('send_logs', False)
+
+        self.enable_od_upload = bool(yaml_data.get('onedrive', {}).get('enable_od_upload', False))
+        self.od_client_id = yaml_data.get('onedrive', {}).get('od_client_id', None)
+        self.od_client_secret = yaml_data.get('onedrive', {}).get('od_client_secret', None)
+        self.od_redirect_uri = yaml_data.get('onedrive', {}).get('od_redirect_uri', None)
+        self.od_upload_dir = yaml_data.get('onedrive', {}).get('od_upload_dir', None)
+
+

@@ -5,7 +5,7 @@ Automatically get FREE sheets of specific user on mymusicsheet and more.
 [HalyconMusic(ハルシオン Anime Piano Covers)](https://www.youtube.com/@HalcyonMusic) is an exceptionally talented piano content creator. Not only does he produce high-quality videos, but he also generously shares his sheet music for free for a limited time after his videos' release. To prevent missing out on the free sheet music due to a busy personal life, I created this repo to get freesheets of but not limited to him. However, whenever I have time, I make sure to support the channel by liking, giving coins(bilibili), favoriting and leaving a comment. So even if using the flow, let's not just be passive viewers.
 
 ## Method
-Use RSS to get user's free sheets and auto download them. Finally we send files via email or upload to onedrive. The sensitive data is saved in Github repo's secrets thus it's safe. 
+Use github action to periodically get user's free sheets and download them. Finally we send files via email or upload to onedrive. The sensitive data is saved in Github repo's secrets thus it's safe. 
 Note: If you want to enable uploading to onedrive: see [About Onedrive](#About-Onedrive).
 
 ## Usage
@@ -29,9 +29,8 @@ wget https://github.com/Freddd13/auto-Halcyon/blob/main/localconfig.yaml?raw=tru
 3. Enable Workflow r/w permissions
 3. Download image and run:
 ```
-docker pull fredyu13/auto-halcyon
-docker run -d --name auto-halcyon -v $(pwd)/.localconfig.yaml:/app/.localconfig.yaml fredyu13/auto-halcyon
-```
+docker pull fredyu13/autoscore
+docker run -d --name autoscore -v $(pwd)/.localconfig.yaml:/app/.localconfig.yaml fredyu13/autoscore
 
 ### User config(For Github Action Secrets, but it's similar for yaml)
 | Variable                  | Description                                         | Example Value          |
@@ -39,8 +38,6 @@ docker run -d --name auto-halcyon -v $(pwd)/.localconfig.yaml:/app/.localconfig.
 | `MMS_email`               | Email associated with MMS website.                | `user@example.com`     |
 | `MMS_password`            | Password for the MMS.                        | `passwordiiyokoiyo`          |
 | `MMS_savefolder_path`     | Path to the save folder for MMS.                   | `files` (recommended)      |
-| `RSS_url`                 | URL of the RSS feed.                               | `https://rsshub.app`|
-| `RSS_key`                 | key of your self-hosted rsshub. url->url/SOMEROUTE?key={key} If you don't know what is it, just leave it empty.                               | `123`|
 | `enable_email_notify`      | Whether to notify downloading result via email  (1 enable, 0 disable)  | `1` |
 | `Email_sender`            | Email address used to send emails.                 | `sender@example.com`   |
 | `Email_receivers`         | Email addresses designated to receive emails.      | `receiver@example.com` |
@@ -72,11 +69,6 @@ The schedule task can be adjusted by modifing the ./docker/crontab.
 
 
 ## Note
-### About RSS
-Currently the repo depends on [MMS user route rss from RSSHub](https://docs.rsshub.app/routes/social-media#youtube-user). It's recommended to replace the domain with your self-hosted rsshub url, because the public hub can sometimes be banned by source sites. Besides, self-hosting one is quite benefit for your other future usage. If you don't have one, you can use the default url `https://rsshub.app/`.
-For more info, please check [RSSHub doc](https://docs.rsshub.app/).
-
-
 ### About Onedrive
 To save to onedrive, you need to create an app in [Azure](https://portal.azure.com/#home). Note that currently only onedrive business international is tested.
 Check out [here](auto_score/onedrive/README.md) for detailed instructions of getting required data.

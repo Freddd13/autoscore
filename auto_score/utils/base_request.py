@@ -1,9 +1,11 @@
 '''
 Date: 2023-10-23 23:09:59
 LastEditors: Kumo
-LastEditTime: 2023-10-23 23:09:59
+LastEditTime: 2024-09-22 19:06:45
 Description: 
 '''
+
+from .proxy_decorator import AUTHOR_PROXY
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -22,9 +24,6 @@ class BaseRequest:
         self._http = requests.Session()
         self._http.mount("https://", self._adapter)
         self._http.mount("http://", self._adapter)
-        self._proxy_dict = {
-            'http': '127.0.0.1:51837',
-            'https': '127.0.0.1:51837',
-        } if IS_AUTHOR_ENV else {}
+        self._proxy_dict = AUTHOR_PROXY
 
 

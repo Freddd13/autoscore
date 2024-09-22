@@ -7,7 +7,7 @@ Description:
 import getpass
 
 IS_AUTHOR_ENV = (getpass.getuser()=="Fred")
-MY_PROXY = {
+AUTHOR_PROXY = {
     'http': '127.0.0.1:51837',
     'https': '127.0.0.1:51837',
 } if IS_AUTHOR_ENV else {}
