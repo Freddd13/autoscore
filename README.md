@@ -68,8 +68,8 @@ docker run -d --name autoscore -v $(pwd)/.localconfig.yaml:/app/.localconfig.yam
 ### Build Docker
 1. Clone this repo
 2. Create a .localconfig.yaml from localconfig.yaml and fill in your data. 
-3. `docker build -t auto-halcyon -f docker/Dockerfile .`
-4. `docker run -d --name auto_halcyon auto-halcyon:latest`
+3. `docker build -t autoscore-f docker/Dockerfile .`
+4. `docker run -d --name autoscore autoscore:latest`
 The schedule task can be adjusted by modifing the ./docker/crontab.
 
 
