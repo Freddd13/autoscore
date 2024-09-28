@@ -51,6 +51,11 @@ jobs:
         od_redirect_uri:  ${{ secrets.od_redirect_uri }}
         od_upload_dir:  ${{ secrets.od_upload_dir }}
 
+        use_oauth2_outlook:  ${{ secrets.use_oauth2_outlook }}
+        outlook_client_id:  ${{ secrets.outlook_client_id }}
+        outlook_client_secret:  ${{ secrets.outlook_client_secret }}
+        outlook_redirect_uri:  ${{ secrets.outlook_redirect_uri }}      
+
         # GITHUB_REPO_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
         # REPO_NAME: ${{ github.event.repository.name }}  # https://stackoverflow.com/questions/62803531/repository-name-as-a-github-action-environment-variable
         # GITHUB_OWNER_REPO: ${{ github.repository }}
