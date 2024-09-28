@@ -14,7 +14,7 @@ from auto_score.directly_request.mms import MMS
 
 from auto_score.ms_auth import MSAuth
 from auto_score.onedrive.patch import upload_large_file
-from auto_score.email.email import EmailHandler
+from auto_score.email import EmailHandler
 
 import hashlib
 import os
@@ -149,13 +149,14 @@ if __name__ == "__main__":
         )
         all_od_upload_success = True
         for path in all_sheets_dir:
-            if od_ms_auth.get_access_token():
+            access_token = od_ms_auth.get_access_token()
+            if access_token:
                 # get filename from path with extension
                 upload_target = os.path.join(
                     strategy.od_upload_dir, os.path.basename(path)
                 ).replace("\\", "/")
                 logger.debug(upload_target)
-                if upload_large_file(od_ms_auth.client, path, upload_target):
+                if upload_large_file(access_token, path, upload_target):
                     logger.info("Upload to onedrive successfully")
                 else:
                     all_od_upload_success = False

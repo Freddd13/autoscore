@@ -5,7 +5,7 @@ LastEditTime: 2024-09-28 17:05:25
 Description: 
 """
 
-from ..utils.logger import LoggerManager
+from .utils.logger import LoggerManager
 
 import smtplib, ssl
 from email.mime.text import MIMEText

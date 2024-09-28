@@ -46,6 +46,10 @@ docker run -d --name autoscore -v $(pwd)/.localconfig.yaml:/app/.localconfig.yam
 | `Email_smtp_port`       | SMTP server port used to send emails.                       | `11451`                 |
 | `Email_mail_license`    | SMTP password or authorization used for sending emails.     | `1145141919810`         |
 | `Email_send_logs`       | Whether to send email with logs (1 enable, 0 disable)       | `1`                     |
+| `use_oauth2_outlook`       | Whether to use outlook oauth2 email (1 enable, 0 disable)       | `1`                     |
+| `outlook_client_id`       | outlook azure app client ID      | `114514`                     |
+| `outlook_client_secret`       | outlook azure app client secret value      | `114514`                     |
+| `outlook_redirect_uri`       | outlook azure app redirect URI       | `http://localhost:9001`                     |
 | `enable_od_upload`      | Whether to also upload sheets to OneDrive (1 enable, 0 disable) | `0`                    |
 | `od_client_id`          | OneDrive app client ID                                      | `114514`                |
 | `od_client_secret`      | OneDrive app client secret value                            | `114514`                |

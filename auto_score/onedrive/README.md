@@ -13,30 +13,16 @@ Go to "Certificates & secrets" -> "New client secret"
     Store the value of the secret in environment variable AZURE_CLIENT_SECRET
 
 ## Login
-```python
-import onedrive.OnedriveManager
-
-client_id = # app--> overview --> app(client) id
-client_secret = # value when creating a secret
-redirect_uri = 'http://localhost:9001'
-
-om = OnedriveManager(client_id, client_secret, redirect_uri)
-print(om.try_refresh_token())   # true --> OK, and token will be saved locally for future use.
-```
+Use ms_auth.py to auth (get_access_token)
 
 ## Using Onedrive API
-This is just a wrapper of auth of the python packge `microsoftgraph-python`. Check its docs for more:
+This is just a patch of the python packge `microsoftgraph-python`. Check its docs for more:
 > https://github.com/GearPlug/microsoftgraph-python
-Note: the client in its docs acts as a public member in class OnedriveManager. For example, if we have a instance of OnedriveManager called om, we call the microsoftgraph-python API using `om.client.xxxxxx`:
-```python
-response = om.client.files.drive_update_existing_file(item_id, "/mnt/c/Users/i/Downloads/image2.jpg")
-```
+Note: Here we just add a large-file-upload method, the microsoft grpah `access_token` from `ms_auth.py` or somewhere is needed to call this method.
 
 For it seems that microsoftgraph-python does not support large file upload, I patched a simple function directly in OnedriveManager, call it using:
 ```python
-om.upload_large_file(r'C:\Users\Fred\Desktop\ustc-zheng-cn.zip', 'ustc-zheng-cn.zip')
+upload_large_file(access_token, r'C:\Users\Fred\Desktop\ustc-zheng-cn.zip', 'ustc-zheng-cn.zip')
 ```
-
-It's recommand to first `try_refresh_token` everytime before calling API.
 
 

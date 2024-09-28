@@ -1,9 +1,10 @@
-'''
+"""
 Date: 2023-10-23 18:04:14
 LastEditors: Kumo
 LastEditTime: 2024-09-22 21:29:50
 Description: 
-'''
+"""
+
 from auto_score.utils.proxy_decorator import AUTHOR_PROXY
 from ..utils.singleton import SingletonMeta, InstanceRegistry
 from ..utils.logger import LoggerManager
@@ -22,6 +23,7 @@ logger = log_manager.logger
 @log_manager.apply_log_method_to_all_methods
 class MMS(BaseRequest):
     _name = "mms_handler"
+
     def __init__(self, email, password, local_savefolder):
         super().__init__()
         InstanceRegistry.register_instance(self)
@@ -35,53 +37,54 @@ class MMS(BaseRequest):
         self.login_url = "https://mms.pd.mapia.io/mms/public/user/signin/email"
         self.headers_login = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
-                #    "X-Api-Key": "mms-public:vslwa5vt0v6E8zfnxwbmw4VFzHCcsgXb5AX7m3Lk",
+            #    "X-Api-Key": "mms-public:vslwa5vt0v6E8zfnxwbmw4VFzHCcsgXb5AX7m3Lk",
             "X-Platform-Type": "PC",
             "Referer": "https://www.mymusicsheet.com/",
             "Origin": "https://www.mymusicsheet.com",
         }
 
-        # 
-        self.BASE_URL = 'https://www.mymusicsheet.com'
-        self.GRAPHQL_URL = 'https://mms.pd.mapia.io/mms/graphql'
-        self.EXCHANGE_RATE_URL = 'https://payport.pd.mapia.io/v2/currency'
-        
+        #
+        self.BASE_URL = "https://www.mymusicsheet.com"
+        self.GRAPHQL_URL = "https://mms.pd.mapia.io/mms/graphql"
+        self.EXCHANGE_RATE_URL = "https://payport.pd.mapia.io/v2/currency"
+
         if not self.login():
             logger.error("sending err email")
             os._exit(-1)
-        
+
         self.headers_download = {
-            'Accept': 'application/json',
+            "Accept": "application/json",
             # 'Accept-Encoding': 'gzip, deflate, br',
-            'Accept-Encoding': 'gzip, deflate', # GH不支持br
-            'Accept-Language': 'zh-hans',
+            "Accept-Encoding": "gzip, deflate",  # GH不支持br
+            "Accept-Language": "zh-hans",
             "Authorization": f"Bearer {self.auth_token}",
-            'Ngsw-Bypass': 'true',
-            'Origin': 'https://www.mymusicsheet.com',
-            'Referer': 'https://www.mymusicsheet.com/',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
-        #    'X-Api-Key': 'mms-public:XXX',
-            'X-Platform-Type': 'PC',
+            "Ngsw-Bypass": "true",
+            "Origin": "https://www.mymusicsheet.com",
+            "Referer": "https://www.mymusicsheet.com/",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+            #    'X-Api-Key': 'mms-public:XXX',
+            "X-Platform-Type": "PC",
             # 'X-Sentry-Request-Id': '0uuc5kkkk',
             # 'X-Smp-Version': '4.8.3',
-            'X-Viewer-Country': 'cn',
+            "X-Viewer-Country": "cn",
         }
 
         self._files = []
         self._sheet_links = []
         self._success = True
 
-
     def login(self) -> bool:
-        payload = {
-            "email": self.email,
-            "password": self.password
-        }
+        payload = {"email": self.email, "password": self.password}
 
-        response = self._http.post(self.login_url, json=payload, headers=self.headers_login, proxies=self._proxy_dict)
+        response = self._http.post(
+            self.login_url,
+            json=payload,
+            headers=self.headers_login,
+            proxies=self._proxy_dict,
+        )
 
         if response.status_code == 200:
-            self.auth_token = json.loads(response.text)['token']
+            self.auth_token = json.loads(response.text)["token"]
             logger.info("登录成功")
             # logger.info("auth_token: " + self.auth_token)
             return True
@@ -89,32 +92,32 @@ class MMS(BaseRequest):
             logger.info("登录失败")
             return False
 
-
     def get_exchange_rates(self):
         params = {
-            'serviceProvider': 'mms',
-            'ngsw-bypass': 'true',
-            'no-cache': str(int(datetime.now().timestamp())),
-            'skipHeaders': 'true'
+            "serviceProvider": "mms",
+            "ngsw-bypass": "true",
+            "no-cache": str(int(datetime.now().timestamp())),
+            "skipHeaders": "true",
         }
         response = self._http.get(self.EXCHANGE_RATE_URL, params=params)
         if response.status_code == 200:
             return response.json()
         return None
 
-
-    def get_recent_sheets(self, username: str, last_sheetnum: int,  iso='USD', free_only=False):
+    def get_recent_sheets(
+        self, username: str, last_sheetnum: int, iso="USD", free_only=False
+    ):
         entry_links, entry_sheetnums, entry_titles = [], [], []
 
         # 获取汇率
         rates = self.get_exchange_rates()
         if rates is None:
             raise Exception("Failed to get exchange rates")
-        
+
         # GraphQL 请求
         payload = {
-            'operationName': 'loadArtistSheets',
-            'query': """
+            "operationName": "loadArtistSheets",
+            "query": """
             query loadArtistSheets($data: SheetSearchInput!) {
                 sheetSearch(data: $data) {
                     list {
@@ -145,25 +148,33 @@ class MMS(BaseRequest):
                     listNum
                 }
             }""",
-            'variables': {
-                'data': {
-                    'listNum': 10,
-                    'paginate': 'page',
-                    'includeChord': None,
-                    'includeLyrics': None,
-                    'page': 1,
-                    'level': None,
-                    'instruments': [],
-                    'orderBy': {
-                        'createdAt': 'DESC'
-                    },
-                    'isFree': free_only,
-                    'category': None,
-                    'artistUrl': username,
-                    'aggregationKeywords': ['PACKAGE_IDS', 'TAG_IDS', 'INSTRUMENTS', 'SHEET_TYPE', 'INCLUDE_CHORD', 'INCLUDE_LYRICS', 'INSTRUMENTATION', 'LEVEL', 'CATEGORY'],
-                    'aggregationKeySize': 20
+            "variables": {
+                "data": {
+                    "listNum": 10,
+                    "paginate": "page",
+                    "includeChord": None,
+                    "includeLyrics": None,
+                    "page": 1,
+                    "level": None,
+                    "instruments": [],
+                    "orderBy": {"createdAt": "DESC"},
+                    "isFree": free_only,
+                    "category": None,
+                    "artistUrl": username,
+                    "aggregationKeywords": [
+                        "PACKAGE_IDS",
+                        "TAG_IDS",
+                        "INSTRUMENTS",
+                        "SHEET_TYPE",
+                        "INCLUDE_CHORD",
+                        "INCLUDE_LYRICS",
+                        "INSTRUMENTATION",
+                        "LEVEL",
+                        "CATEGORY",
+                    ],
+                    "aggregationKeySize": 20,
                 }
-            }
+            },
         }
 
         response = self._http.post(self.GRAPHQL_URL, json=payload)
@@ -171,56 +182,61 @@ class MMS(BaseRequest):
             # print(response.text)
             raise Exception("GraphQL request failed")
 
-        sheet_search = response.json().get('data', {}).get('sheetSearch', {}).get('list', [])
+        sheet_search = (
+            response.json().get("data", {}).get("sheetSearch", {}).get("list", [])
+        )
         # print(response.json())
-        
+
         items = []
         for item in sheet_search:
-            price = float(item.get('price', -1))
-            if abs(price) < 1e-6: # free sheet
-            # if 1: # free sheet
+            price = float(item.get("price", -1))
+            if abs(price) < 1e-6:  # free sheet
+                # if 1:  # debug: all sheets
                 title = f"{item['author']['name']} | {item['title']}"
                 link = f"{self.BASE_URL}/{username}/{item['sheetId']}"
                 this_sheetnum = int(link.split("/")[-1])
                 if this_sheetnum <= last_sheetnum:
                     logger.warn("Nothing new")
-                    break                
+                    break
                 # print('title:', title)
                 # print('link:', link)
                 # print('sheetnum:', this_sheetnum)
                 entry_links.append(link)
                 entry_sheetnums.append(this_sheetnum)
                 entry_titles.append(title)
-                      
+
         return entry_links, max(entry_sheetnums) if entry_sheetnums else 0, entry_titles
 
-
-    def download_sheet(self, mms_link:str) -> bool:
+    def download_sheet(self, mms_link: str) -> bool:
         num = mms_link.split("/")[-1]
-        url = f'https://mms.pd.mapia.io/mms/public/sheet/{num}'
-        response = self._http.get(url, headers=self.headers_download, proxies=self._proxy_dict)
+        url = f"https://mms.pd.mapia.io/mms/public/sheet/{num}"
+        response = self._http.get(
+            url, headers=self.headers_download, proxies=self._proxy_dict
+        )
 
         if response.status_code != 200:
             logger.error("fail to get sheet data")
 
-        #print(response.text)
-        response.encoding = 'utf-8'
+        # print(response.text)
+        response.encoding = "utf-8"
         data = response.json()
-  
+
         success_num = 0
         total_num = 0
-        for file in data['files']:
-            filename = file['fileName']
+        for file in data["files"]:
+            filename = file["fileName"]
             if filename.endswith(".pdf"):
                 total_num += 1
-                mfsKey=file['mfsKey']
+                mfsKey = file["mfsKey"]
                 # logger.debug("mfsKey: " + mfsKey)
-                #		 GET https://payport.pd.mapia.io/v2/currency?serviceProvider=mms&ngsw-bypass=true&no-cache=1693829884916&skipHeaders=true 
-                #		url = "https://payport.pd.mapia.io/v2/currency"
+                # 		 GET https://payport.pd.mapia.io/v2/currency?serviceProvider=mms&ngsw-bypass=true&no-cache=1693829884916&skipHeaders=true
+                # 		url = "https://payport.pd.mapia.io/v2/currency"
                 url_pdf = f"https://mms.pd.mapia.io/mms/public/file/{mfsKey}/download"
                 self._sheet_links.append(url_pdf)
 
-                response_pdf = self._http.get(url_pdf, headers=self.headers_download, proxies=self._proxy_dict)
+                response_pdf = self._http.get(
+                    url_pdf, headers=self.headers_download, proxies=self._proxy_dict
+                )
 
                 if response_pdf.status_code == 200:
                     filepath = os.path.join(self.local_savefolder, filename)
@@ -230,8 +246,10 @@ class MMS(BaseRequest):
                     success_num += 1
                     logger.info(f"文件 '{filename}' 下载成功")
                 else:
-                    logger.info(f"请求失败，状态码: {response_pdf.status_code}，错误信息: {response_pdf.text}")
-        
+                    logger.info(
+                        f"请求失败，状态码: {response_pdf.status_code}，错误信息: {response_pdf.text}"
+                    )
+
         logger.debug(f"success num {success_num} / {total_num} ")
         if success_num != total_num:
             logger.error(f"Some of {num} downloading failed")
@@ -239,15 +257,13 @@ class MMS(BaseRequest):
         else:
             logger.info(f"All of {num} downloading success")
         return self._success
-            
 
-    def download_sheets(self, mms_links:list) -> bool:
+    def download_sheets(self, mms_links: list) -> bool:
         for link in mms_links:
             if not self.download_sheet(link):
                 logger.error(f"Fail to download {link}")
                 self._success = False
         return self._success
-           
 
     @property
     def file_paths(self):
