@@ -45,6 +45,8 @@ class GithubActionStrategy(BaseStrategy):
         self.rss_url = os.environ.get('RSS_url')
         self.rss_url_key = os.environ.get('RSS_url_key')
 
+        # email
+        ## basic
         self.enable_email_notify = bool(os.environ.get('enable_email_notify'))
         self.sender = os.environ.get('Email_sender')
         self.receivers = [os.environ.get('Email_receivers')] # TODO
@@ -53,6 +55,13 @@ class GithubActionStrategy(BaseStrategy):
         self.mail_license = os.environ.get('Email_mail_license') 
         self.send_logs = os.environ.get('Email_send_logs') 
 
+        ## outlook oauth app params
+        self.use_oauth2_outlook = bool(os.environ.get('use_oauth2_outlook'))
+        self.outlook_client_id = os.environ.get('outlook_client_id')
+        self.outlook_client_secret = os.environ.get('outlook_client_secret')
+        self.outlook_redirect_uri = os.environ.get('outlook_redirect_uri')
+
+        
         # onedrive
         self.enable_od_upload = bool(os.environ.get('enable_od_upload'))
         self.od_client_id = os.environ.get('od_client_id')
@@ -84,6 +93,8 @@ class DockerStrategy(BaseStrategy):
         self.rss_url = yaml_data.get('RSS', {}).get('url', None)
         self.rss_url_key = yaml_data.get('RSS', {}).get('key', None)
 
+        # email
+        ## basic
         self.enable_email_notify = bool(yaml_data.get('Email', {}).get('enable_email_notify', False))
         self.sender = yaml_data.get('Email', {}).get('sender', None)
         self.receivers = yaml_data.get('Email', {}).get('receivers', None)
@@ -92,6 +103,13 @@ class DockerStrategy(BaseStrategy):
         self.mail_license = yaml_data.get('Email', {}).get('mail_license', None)
         self.send_logs = yaml_data.get('Email', {}).get('send_logs', False)
 
+        ## outlook oauth app params
+        self.use_oauth2_outlook = bool(yaml_data.get('Email', {}).get('use_oauth2_outlook', False))
+        self.outlook_client_id = yaml_data.get('Email', {}).get('outlook_client_id', None)
+        self.outlook_client_secret = yaml_data.get('Email', {}).get('outlook_client_secret', None)
+        self.outlook_redirect_uri = yaml_data.get('Email', {}).get('outlook_redirect_uri', None)
+
+        # onedrive
         self.enable_od_upload = bool(yaml_data.get('onedrive', {}).get('enable_od_upload', False))
         self.od_client_id = yaml_data.get('onedrive', {}).get('od_client_id', None)
         self.od_client_secret = yaml_data.get('onedrive', {}).get('od_client_secret', None)
@@ -118,6 +136,8 @@ class LocalStrategy(BaseStrategy):
         self.rss_url = yaml_data.get('RSS', {}).get('url', None)
         self.rss_url_key = yaml_data.get('RSS', {}).get('key', None)
 
+        # email
+        ## basic
         self.enable_email_notify = bool(yaml_data.get('Email', {}).get('enable_email_notify', False))
         self.sender = yaml_data.get('Email', {}).get('sender', None)
         self.receivers = yaml_data.get('Email', {}).get('receivers', None)
@@ -126,10 +146,17 @@ class LocalStrategy(BaseStrategy):
         self.mail_license = yaml_data.get('Email', {}).get('mail_license', None)
         self.send_logs = yaml_data.get('Email', {}).get('send_logs', False)
 
+        ## outlook oauth app params
+        self.use_oauth2_outlook = bool(yaml_data.get('Email', {}).get('use_oauth2_outlook', False))
+        self.outlook_client_id = yaml_data.get('Email', {}).get('outlook_client_id', None)
+        self.outlook_client_secret = yaml_data.get('Email', {}).get('outlook_client_secret', None)
+        self.outlook_redirect_uri = yaml_data.get('Email', {}).get('outlook_redirect_uri', None)
+
+        # onedrive
         self.enable_od_upload = bool(yaml_data.get('onedrive', {}).get('enable_od_upload', False))
         self.od_client_id = yaml_data.get('onedrive', {}).get('od_client_id', None)
         self.od_client_secret = yaml_data.get('onedrive', {}).get('od_client_secret', None)
         self.od_redirect_uri = yaml_data.get('onedrive', {}).get('od_redirect_uri', None)
-        self.od_upload_dir = yaml_data.get('onedrive', {}).get('od_upload_dir', None)
+        self.od_upload_dir = yaml_data.get('onedrive', {}).get('od_upload_dir', None)    
 
 

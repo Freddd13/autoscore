@@ -16,6 +16,11 @@ Email:
   mail_license: 114514
   send_logs: 1
 
+  use_oauth2_outlook: 0
+  outlook_client_id: 11451419-1981-0114-5141-919810114514
+  outlook_client_secret: 114514191981011451419198101145141919810hengaaaa
+  outlook_redirect_uri: http://localhost:9001
+
 onedrive:
   enable_od_upload: 0
   od_client_id: 114514
