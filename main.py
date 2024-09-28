@@ -229,17 +229,12 @@ if __name__ == "__main__":
                 strategy.receivers,
             )
         # all_sheets_dir.extend(LoggerManager.get_all_log_filenames())
-        try:
-            email_handler.perform_sending(
-                subject,
-                content,
-                sheet_files=all_sheets_dir,
-                log_files=(
-                    LoggerManager.get_all_log_filenames() if strategy.send_logs else []
-                ),
-            )
-        except Exception as e:
-            collect_errors(str(e))
+        if not email_handler.perform_sending(
+            subject,
+            content,
+            sheet_files=all_sheets_dir,
+            log_files=(
+                LoggerManager.get_all_log_filenames() if strategy.send_logs else []
+            ),
+        ):
             os._exit(-1)
-
-    # make github action failed

@@ -73,7 +73,9 @@ class EmailHandler:
                     smtp.login(self.email, self.mail_license)
                     smtp.sendmail(self.email, self.receivers, message.as_string())
                 logger.info("Send email success")
+                return True
 
         except Exception as e:
             logger.error(str(e))
             logger.error("Fail to send mail!")
+            return False
