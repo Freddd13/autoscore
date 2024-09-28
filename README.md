@@ -77,19 +77,20 @@ The schedule task can be adjusted by modifing the ./docker/crontab.
 ### About Onedrive
 To save to onedrive, you need to create an app in [Azure](https://portal.azure.com/#home). Note that currently only onedrive business international is tested.
 Check out [here](auto_score/onedrive/README.md) for detailed instructions of getting required data.
-The onedrive needs a login for the first time, after that the token will be saved to `_refresh_token`. As I have no idea how to receive auth callback in github action, the code assumes there's already a token file with token. Thus you need to run on local first to generate the token file. 
+The onedrive needs a login for the first time, after that the token will be saved to `_od_refresh_token`. As I have no idea how to receive auth callback in github action, the code assumes there's already a token file with token. Thus you need to run on local first to generate the token file. 
 For github action:
 1. Fork this repo,
 2. Follow [Run locally](#Run-locally) (clone your own repo) to run once.
 3. Check if the token file generates successfully, and push the code with token file to your repo.
 ```bash
-git add _refresh_token && git commit -m "add token" && git push
+git add _refresh_token && git commit -m "add token" && git push -f
 ```
 4. Follow [Use Github Action](#Use-Github-Action)
 
 
 ### About Email
 The `enable_email_notify` is used to send you downloading result including sheets and app log. If you disable the email, there's still another way to save your sheets: remove the `MMS_savefolder_path` directory if it exists in the `.gitignore`. The action will update the downloaded sheets to your repo. But it's not a good behavior to share others' sheets without permission, thus it's not recommended to disable email before other uploading method is supported.
+If you use `outlook`, remember to set use_oauth2_outlook to `1`. Besides, you also have to create an app in azure and set params like outlook_client_id to send emails for that basic auth is not supported anymore and replaced by oauth2 by microsoft. The app params is the same as that in [ About Onedrive](#About-Onedrive)
 
 
 ## TODO
