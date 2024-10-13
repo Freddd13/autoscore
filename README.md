@@ -29,8 +29,10 @@ wget https://github.com/Freddd13/auto-Halcyon/blob/main/localconfig.yaml?raw=tru
 3. Enable Workflow r/w permissions
 3. Download image and run:
 
+```bash
 docker pull fredyu13/autoscore
 docker run -d --name autoscore -v $(pwd)/.localconfig.yaml:/app/.localconfig.yaml fredyu13/autoscore
+```
 
 ### User config(For Github Action Secrets, but it's similar for yaml)
 
