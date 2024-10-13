@@ -104,8 +104,9 @@ class MMS(BaseRequest):
             return response.json()
         return None
 
+    # free only - true/false/none--> false will not return free sheets, thus we should use none to get full sheets
     def get_recent_sheets(
-        self, username: str, last_sheetnum: int, iso="USD", free_only=False
+        self, username: str, last_sheetnum: int, iso="USD", free_only=None
     ):
         entry_links, entry_sheetnums, entry_titles = [], [], []
 
@@ -190,6 +191,9 @@ class MMS(BaseRequest):
         items = []
         for item in sheet_search:
             price = float(item.get("price", -1))
+            print("=========================================")
+            print("price:", price)
+            print("item:", item)
             if abs(price) < 1e-6:  # free sheet
                 # if 1:  # debug: all sheets
                 title = f"{item['author']['name']} | {item['title']}"
