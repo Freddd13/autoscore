@@ -191,9 +191,9 @@ class MMS(BaseRequest):
         items = []
         for item in sheet_search:
             price = float(item.get("price", -1))
-            print("=========================================")
-            print("price:", price)
-            print("item:", item)
+            # print("=========================================")
+            # print("price:", price)
+            # print("item:", item)
             if abs(price) < 1e-6:  # free sheet
                 # if 1:  # debug: all sheets
                 title = f"{item['author']['name']} | {item['title']}"
