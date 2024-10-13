@@ -1,7 +1,7 @@
 '''
 Date: 2023-10-23 18:24:44
 LastEditors: Kumo
-LastEditTime: 2024-09-22 19:00:40
+LastEditTime: 2024-10-13 11:50:38
 Description: 
 '''
 from .utils.logger import LoggerManager
@@ -47,7 +47,7 @@ class GithubActionStrategy(BaseStrategy):
 
         # email
         ## basic
-        self.enable_email_notify = bool(os.environ.get('enable_email_notify'))
+        self.enable_email_notify = bool(int(os.environ.get('enable_email_notify')))
         self.sender = os.environ.get('Email_sender')
         self.receivers = [os.environ.get('Email_receivers')] # TODO
         self.smtp_host = os.environ.get('Email_smtp_host')
@@ -56,14 +56,14 @@ class GithubActionStrategy(BaseStrategy):
         self.send_logs = os.environ.get('Email_send_logs') 
 
         ## outlook oauth app params
-        self.use_oauth2_outlook = bool(os.environ.get('use_oauth2_outlook'))
+        self.use_oauth2_outlook = bool(int(os.environ.get('use_oauth2_outlook')))
         self.outlook_client_id = os.environ.get('outlook_client_id')
         self.outlook_client_secret = os.environ.get('outlook_client_secret')
         self.outlook_redirect_uri = os.environ.get('outlook_redirect_uri')
 
         
         # onedrive
-        self.enable_od_upload = bool(os.environ.get('enable_od_upload'))
+        self.enable_od_upload = bool(int(os.environ.get('enable_od_upload')))
         self.od_client_id = os.environ.get('od_client_id')
         self.od_client_secret = os.environ.get('od_client_secret')
         self.od_redirect_uri = os.environ.get('od_redirect_uri')
