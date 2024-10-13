@@ -172,11 +172,11 @@ if __name__ == "__main__":
         logger.info("Update last download signal successfully.")
 
     ## 7. send email
+    has_error_prefix = "[ERROR] " if len(ERROR_MSGS) > 0 else ""
     if strategy.enable_email_notify:
         ### check result and prepare mail data
         logger.info("=" * 50)
         logger.info("summary: ")
-        has_error_prefix = "[ERROR] " if len(ERROR_MSGS) > 0 else ""
         if all_tasks_success:
             if num_newly_downloads > 0:
                 subject = f"{has_error_prefix}Successfully downloading sheets."
@@ -238,3 +238,10 @@ if __name__ == "__main__":
             ),
         ):
             os._exit(-1)
+    else:
+        logger.info("Skip sending email.")
+        if has_error_prefix:
+            logger.error(
+                "ERROR msgs: \n{}".format("\n".join([err for err in ERROR_MSGS]))
+            )
+            raise Exception("Error occurred, please check log.")
