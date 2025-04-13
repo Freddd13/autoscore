@@ -12,9 +12,10 @@ Note: If you want to enable uploading to onedrive: see [About Onedrive](#About-O
 
 ### Use Github Action
 1. Fork the repo
-2. Use your own information to set the needed secrets in your repo(Repo Settings -- Secrets and variables -- Actions -- Secrets). You need an email with SMTP host, port, account and app password. Check out [User config](#User-config) for the full config we need.
+2. Delete the file `_last_download_signal`, edit the file `subscriptions`(currently, the format is mms|[subscribed mms artist username], one line for each artist) according to your needs. Then commit your changes.
+3. Use your own information to set the needed secrets in your repo(Repo Settings -- Secrets and variables -- Actions -- Secrets). You may need an email with SMTP host, port, account and app password. Check out [User config](#User-config) for the full config we need, check [About Email](#About-Email) for details.
 ![](docs/add_secrets.png)
-3. Enable Workflow r/w permissions
+4. Enable Workflow r/w permissions
 Settings -- Actions -- General
 ![](docs/enable_rw.png)
 
