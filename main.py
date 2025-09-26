@@ -178,7 +178,7 @@ if __name__ == "__main__":
         logger.info("=" * 50)
         logger.info("summary: ")
         if all_tasks_success:
-            if num_newly_downloads > 0:
+            if num_newly_downloads > 0 and max_sheetnum > last_sheetnum:
                 subject = f"{has_error_prefix}Successfully downloading sheets."
                 content = "Success downloading the following sheet(s):\n{}".format(
                     "\n".join([title for title in titles_newly_download])
@@ -186,7 +186,7 @@ if __name__ == "__main__":
                 logger.info("All sheets start to download successfully.")
 
             else:  # nothing new
-                subject = f"{has_error_prefix}There's no new sheet updated."
+                subject = f"{has_error_prefix}There's no new sheet or old sheet redownloaded to update."
                 content = "There's no new sheet!"
                 logger.info("There's no new sheet")
 

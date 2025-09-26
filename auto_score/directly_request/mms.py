@@ -201,7 +201,8 @@ class MMS(BaseRequest):
                 this_sheetnum = int(link.split("/")[-1])
                 if this_sheetnum <= last_sheetnum:
                     logger.warn("Nothing new")
-                    break
+                    # !!in case sheet is updated, commented:
+                    # break 
                 # print('title:', title)
                 # print('link:', link)
                 # print('sheetnum:', this_sheetnum)
